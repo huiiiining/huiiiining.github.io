@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialSnap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #fdf2f7; font-family: 'Bitter', serif; display: flex; flex-direction: column; align-items: center; }
+
+        .app-header { width: 100%; background: #fff; padding: 12px 0; text-align: center; border-bottom: 2px solid #ff3385; position: sticky; top: 0; z-index: 10; }
+        .app-logo { font-family: 'Luckiest Guy', cursive; color: #ff3385; margin: 0; font-size: 1.5rem; }
+        
+        .feed-container { width: 100%; max-width: 400px; height: 75vh; overflow-y: auto; padding: 15px; box-sizing: border-box; }
+        
+        .post { background: white; border-radius: 15px; margin-bottom: 15px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .post-img { width: 100%; height: 180px; background: #ffebee; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+        .post-user { font-weight: bold; color: #ff3385; margin: 8px 0 3px 0; font-size: 0.9rem; }
+        .post-desc { font-size: 0.85rem; color: #555; }
+
+        .reward-box {
+            position: fixed;
+            top: 15%; 
+            width: 80%;
+            max-width: 300px;
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 100;
+            animation: popUp 0.5s ease-out;
+        }
+        .reward-box h2 { font-family: 'Luckiest Guy', cursive; margin: 0; font-size: 1.1rem; }
+        
+        .tips-list { background: rgba(255,255,255,0.2); padding: 8px; border-radius: 10px; font-size: 0.7rem; text-align: left; margin-top: 8px; }
+
+    
+        .narrative-box {
+            position: fixed;
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 700px;
+            background: rgba(255, 182, 193, 0.4); 
+            backdrop-filter: blur(4px); 
+            border-top: 3px solid #ff3385;
+            padding: 10px;
+            border-radius: 30px;
+            text-align: center;
+            z-index: 200;
+        }
+        .narrative-box p { color: white; margin: 0; font-size: 0.95rem; font-style: italic; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <audio id="successAudio" src="audio/Olivia_4.mp3"></audio>
+
+    <div class="app-header">
+        <h1 class="app-logo">SocialSnap <span style="font-size: 0.7rem;">(Safe Mode)</span></h1>
+    </div>
+
+    <div class="feed-container">
+        <div class="post"><div class="post-img">🍦</div><p class="post-user">@SweetTreats</p><p class="post-desc">Best sundae ever!</p></div>
+        <div class="post"><div class="post-img">🐶</div><p class="post-user">@PuppyLove</p><p class="post-desc">He finally learned to sit!</p></div>
+        <div class="post"><div class="post-img">🎨</div><p class="post-user">@ArtLife</p><p class="post-desc">Doodling during break...</p></div>
+    </div>
+
+    <div class="reward-box">
+        <h2>Smart Choice! 🛡️</h2>
+        <div class="tips-list">
+            • <b>Filter:</b> No inappropriate content.<br>
+            • <b>Privacy:</b> Your data is kept private.<br>
+            • <b>Peace:</b> No pressure to act older.
+        </div>
+       <a href="Page5.html" class="action-btn" style="background: #2196f3; box-shadow: 0 5px 0 #1976d2;">Check New Notifications</a>
+       </div>
+
+    <div id="narrativeBox" class="narrative-box">
+        <p id="narrativeText">""I'm glad I stayed honest. The app is still fun, and I don't have to worry about anything!""</p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const audio = document.getElementById('successAudio');
+            audio.play().catch(e => console.log("Audio play blocked until user interaction. Click anywhere to play."));
+            document.body.addEventListener('click', () => {
+                if (audio.paused) audio.play();
+            }, { once: true });
+        };
+    </script>
+
+</body>
+</html>

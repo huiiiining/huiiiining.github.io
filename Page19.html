@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialSnap - Notification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@1,400&family=Luckiest+Guy&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; width: 100vw; height: 100vh; font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
+        #startScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 5000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .notification {
+            width: 90%; max-width: 400px; background: #fff; color: #333;
+            padding: 15px; border-radius: 20px; display: flex; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 30px;
+            animation: slideDown 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .notif-icon { width: 45px; height: 45px; background: #ff3385; border-radius: 12px; margin-right: 15px; }
+        .notif-text { flex: 1; }
+        .notif-title { font-weight: bold; font-size: 0.9rem; color: #ff3385; }
+        .notif-msg { font-size: 0.85rem; }
+
+        .join-btn {
+            padding: 20px 50px; background: #ff3385; color: white; border: none;
+            border-radius: 50px; font-family: 'Luckiest Guy'; font-size: 1.5rem;
+            cursor: pointer; box-shadow: 0 0 25px rgba(255, 51, 133, 0.6);
+        }
+
+        @keyframes slideDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        #fadeOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; opacity: 0; z-index: 1000; pointer-events: none;
+            transition: opacity 2.5s ease-in-out;
+        }
+
+        .background-pov {
+            width: 100%; height: 100%; position: absolute;
+            background: url('png/oliviapov.png') center/cover no-repeat;
+            filter: brightness(0.5); z-index: 1;
+        }
+
+        .live-ui { position: relative; z-index: 10; height: 100vh; padding: 20px; }
+        .live-tag {
+            display: inline-block; background: #ff3385; color: white; 
+            padding: 5px 15px; border-radius: 5px; font-family: 'Luckiest Guy';
+            animation: pulse 1s infinite;
+        }
+        .viewer-count { margin-left: 10px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 5px; font-size: 14px; }
+
+        .narrative-box {
+            position: fixed; bottom: 3%; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 700px; background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); border-top: 3px solid #f699bf;
+            padding: 15px; border-radius: 30px; text-align: center;
+            z-index: 200; opacity: 0; transition: opacity 0.8s ease;
+        }
+        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 1rem; font-style: italic; font-family: 'Bitter', serif; }
+        .chat-container {
+            position: absolute; bottom: 18%; left: 20px; width: 280px; height: 350px;
+            display: flex; flex-direction: column-reverse; overflow: hidden; z-index: 15;
+            mask-image: linear-gradient(to top, black 60%, transparent 100%);
+        }
+        .comment {
+            font-size: 12px; margin-top: 4px; padding: 6px 10px; background: rgba(0,0,0,0.6);
+            border-radius: 12px; border-left: 3px solid #ff3385; animation: commentFlow 3s linear forwards;
+            line-height: 1.2; width: fit-content; max-width: 95%;
+        }
+        .emoji-track { position: absolute; right: 20px; bottom: 15%; width: 60px; height: 300px; z-index: 20; pointer-events: none;}
+        .emoji { position: absolute; bottom: 0; opacity: 0; animation: floatEmoji 3s ease-in forwards; font-size: 24px; }
+
+        @keyframes commentFlow { 0% { transform: translateY(20px); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-300px); opacity: 0; } }
+        @keyframes floatEmoji { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; transform: translateY(-20px) scale(1.2); } 100% { transform: translateY(-300px) scale(1); opacity: 0; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    </style>
+</head>
+<body>
+
+<div id="startScreen">
+    <div class="notification">
+        <div class="notif-icon"></div>
+        <div class="notif-text">
+            <div class="notif-title">SocialSnap</div>
+            <div class="notif-msg"><strong>Ryan_real</strong> has started a live: "TRUTH REVEAL..."</div>
+        </div>
+    </div>
+    <button class="join-btn" onclick="startExperience()">WATCH LIVE</button>
+</div>
+
+<div id="fadeOverlay"></div>
+<div class="background-pov"></div>
+
+<div class="live-ui">
+    <div class="live-tag">LIVE</div>
+    <span class="viewer-count">👤 <span id="vCount">978</span></span>
+    <div class="chat-container" id="chat"></div>
+    <div class="emoji-track" id="emojis"></div>
+    <div class="narrative-box" id="thoughtBox"><p id="thoughtText"></p></div>
+</div>
+
+<script>
+    const thoughts = [
+        { text: "Ryan is doing a Live right now... he said i came onto him first...", audio: "audio/Olivia_24.mp3" },
+        { text: "He's showing the photo I posted earlier... he's using my own photos against me.", audio: "audio/Olivia_25.mp3" },
+        { text: "The comments... everyone's encouraging him. They don't realize this is real.", audio: "audio/Olivia_26.mp3" },
+        { text: "He's at 995 viewers. He said he will come find me at 1,000 followers", audio: "audio/Olivia_27.mp3" },
+        { text: "I am scared.. is he really going to dox me?", audio: "audio/Olivia_28.mp3" }
+    ];
+
+    const chatPool = ["DO IT RYAN!", "Is this Oak Hills area??", "SICK DEEPFAKE BRO", "Ring the bell!", "Dox her!", "LMAO REVEAL IT", "She's home lol", "Is that a Pink Bean cup??", "1K VIEWERS LETS GOOO", "I know that street...", "SPILL THE TEA ☕", "Caught in 4K 📸"];
+    const emojiPool = ["😡", "😱", "🔥", "👀", "💔", "💯"];
+
+    const audioObj = new Audio();
+    const sfxNotif = new Audio("audio/sfx_Notification.mp3"); 
+
+    window.addEventListener('mouseover', () => { sfxNotif.play().catch(()=>{}); }, {once: true});
+
+    let step = 0;
+    let viewers = 978;
+
+    function startExperience() {
+        document.getElementById('startScreen').style.display = 'none';
+        playSequence();
+        setInterval(spawnComment, 800);
+        setInterval(spawnEmoji, 600);
+    }
+
+    function playSequence() {
+        if (step < thoughts.length) {
+            document.getElementById('thoughtBox').style.opacity = 1;
+            document.getElementById('thoughtText').innerText = thoughts[step].text;
+            audioObj.src = thoughts[step].audio;
+            audioObj.play();
+            audioObj.onended = () => {
+                step++;
+                if (step < thoughts.length) setTimeout(playSequence, 1000);
+                else checkFinalTransition();
+            };
+        }
+    }
+
+    function spawnComment() {
+        const chat = document.getElementById('chat');
+        const c = document.createElement('div');
+        c.className = 'comment';
+        c.innerHTML = `<strong>User${Math.floor(Math.random()*99)}</strong>: ${chatPool[Math.floor(Math.random()*chatPool.length)]}`;
+        chat.prepend(c);
+        setTimeout(() => c.remove(), 3000);
+    }
+
+    function spawnEmoji() {
+        const track = document.getElementById('emojis');
+        const e = document.createElement('div');
+        e.className = 'emoji';
+        e.innerText = emojiPool[Math.floor(Math.random()*emojiPool.length)];
+        e.style.left = Math.random() * 40 + "px";
+        track.appendChild(e);
+        setTimeout(() => e.remove(), 3000);
+    }
+
+    function checkFinalTransition() {
+        if (step >= thoughts.length && viewers >= 1000) {
+            document.getElementById('fadeOverlay').style.opacity = 1;
+            setTimeout(() => { window.location.href = "page20.html"; }, 3000);
+        }
+    }
+
+    setInterval(() => {
+        if (viewers < 1000) {
+            viewers += 1;
+            document.getElementById('vCount').innerText = viewers;
+        }
+        checkFinalTransition();
+    }, 1200);
+</script>
+</body>
+</html>

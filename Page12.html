@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Silence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; font-family: 'Bitter', serif; }
+        
+        .desk-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+        .desk-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: fill; filter: brightness(0.6); transition: filter 0.8s; }
+        
+        #computerClickZone { position: absolute; top: 29%; left: 31%; width: 28%; height: 25%; cursor: pointer; z-index: 15; display: none; }
+
+        /* Notification Styling */
+        #notifArea { position: fixed; top: 20px; right: 20px; width: 300px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+        
+        .notif {
+            width: 100%; background: rgba(255, 255, 255, 0.98); border-left: 5px solid #ff3385;
+            padding: 12px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-family: Arial, sans-serif; transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .notif.show { transform: translateX(0); }
+        .notif-app { font-size: 0.7rem; color: #ff3385; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
+        .notif-text { font-size: 0.85rem; color: #333; font-weight: 600; }
+
+        /* Narrative Box */
+        .narrative-box {
+            position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 700px; background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); border-top: 3px solid #f699bf;
+            padding: 10px; border-radius: 30px; text-align: center; z-index: 5000; 
+            display: none; opacity: 0; transition: opacity 0.8s ease;
+        }
+        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); }
+
+        #typingOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100; background: #f3f3f3; display: none; flex-direction: column; align-items: center; }
+        .word-header { width: 100%; height: 40px; background: #2b579a; color: white; display: flex; align-items: center; padding-left: 20px; font-family: Arial; font-weight: bold; font-size: 0.9rem; }
+        .word-page { width: 800px; height: 90%; background: white; margin-top: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1); padding: 60px; box-sizing: border-box; color: #000; font-family: Arial; font-size: 1.1rem; line-height: 1.6; }
+
+        #eduBox { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 450px; background: #fff; border: 4px solid #ff3385; border-radius: 20px; padding: 30px; text-align: center; z-index: 500; display: none; }
+        .btn-action { background: #ff3385; color: white; border: none; padding: 12px 35px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        #timeSkip { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #fff; z-index: 6000; flex-direction: column; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body>
+
+    <audio id="audio20" src="audio/Olivia_20.mp3"></audio>
+    <audio id="audio21" src="audio/Olivia_21.mp3"></audio>
+    <audio id="audio22" src="audio/Olivia_22mp3.mp3"></audio>
+
+    <div class="desk-container">
+        <img src="png/desk.png" class="desk-img" id="deskImg">
+        <div id="computerClickZone" onclick="startHomework()"></div>
+    </div>
+
+    <div id="typingOverlay">
+        <div class="word-header">History_Assignment_V1.docx - Word</div>
+        <div class="word-page" id="wordContent"></div>
+    </div>
+
+    <div id="notifArea"></div>
+    <div id="thoughtBox" class="narrative-box"><p id="narrativeText"></p></div>
+
+    <div id="eduBox">
+        <h2 style="font-family: 'Luckiest Guy'; color: #ff3385;">THE RISK OF SILENCE</h2>
+        <p>Silence doesn't stop the content from spreading—it just hides the truth while the problem grows.</p>
+        <button class="btn-action" onclick="showHomeworkPrompt()">Next</button>
+    </div>
+
+    <div id="timeSkip"><p style="font-size: 2.5rem; font-style: italic;">Monday Morning...</p></div>
+
+    <script>
+        const notifMessages = [
+            "Group Chat: Did you see the video??",
+            "Mark: Is this you, Olivia?",
+            "Unknown: Everyone's sharing it...",
+            "Chloe: ANSWER YOUR PHONE!",
+            "Snap: New Mention in Story",
+            "Group Chat: SHE LEAKED!",
+            "Unknown: This is going viral lol",
+            "Chloe: Olivia, please talk to me!"
+        ];
+
+        const tBox = document.getElementById('thoughtBox');
+        const tText = document.getElementById('narrativeText');
+
+        function showNarrative(msg) {
+            tText.innerText = msg;
+            tBox.style.display = 'block';
+            setTimeout(() => { tBox.style.opacity = '1'; }, 50);
+        }
+
+        function hideNarrative() {
+            tBox.style.opacity = '0';
+            setTimeout(() => { tBox.style.display = 'none'; }, 800);
+        }
+
+        window.onload = function() {
+            setTimeout(() => {
+                showNarrative("I should leave it alone... if I don't say anything, maybe people won't think it's me.");
+                const a20 = document.getElementById('audio20');
+                a20.play();
+                a20.onended = showEduBox;
+            }, 500);
+        };
+
+        function showEduBox() {
+            hideNarrative();
+            document.getElementById('eduBox').style.display = 'block';
+        }
+
+        function showHomeworkPrompt() {
+            document.getElementById('eduBox').style.display = 'none';
+            showNarrative("I need to block it out. I'll just finish my History assignment on my computer.");
+            const a21 = document.getElementById('audio21');
+            a21.play();
+            document.getElementById('deskImg').style.filter = "brightness(1)";
+            document.getElementById('computerClickZone').style.display = 'block';
+        }
+
+        function spawnNotif(msg) {
+            const area = document.getElementById('notifArea');
+            const n = document.createElement('div');
+            n.className = 'notif';
+            n.innerHTML = `<div class="notif-app">SocialSnap</div><div class="notif-text">${msg}</div>`;
+            
+            // Sync: Audio triggers exactly when element is added to DOM
+            const sfx = new Audio('audio/sfx_Notification.mp3');
+            sfx.play();
+            
+            area.prepend(n); // Newest on top
+            
+            // Trigger smooth slide-in
+            setTimeout(() => n.classList.add('show'), 10);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                n.style.opacity = '0';
+                setTimeout(() => n.remove(), 500);
+            }, 4000);
+        }
+
+        function startHomework() {
+            hideNarrative();
+            document.getElementById('computerClickZone').style.display = 'none';
+            document.getElementById('typingOverlay').style.display = 'flex';
+            
+            const content = document.getElementById('wordContent');
+            const essayText = "The Industrial Revolution was a period of global transition. It began in Britain and spread across the world, changing how people worked and lived forever. Steam power was a major factor in this transformation, leading to the rise of factories and urban centers...";
+            
+            let i = 0;
+            const typer = setInterval(() => {
+                content.innerHTML += essayText.charAt(i);
+                i++;
+
+                // HIGH FREQUENCY BURSTS
+                if (i === 15) spawnNotif(notifMessages[0]);
+                if (i === 30) spawnNotif(notifMessages[1]);
+                if (i === 45) spawnNotif(notifMessages[2]);
+                if (i === 80) {
+                    spawnNotif(notifMessages[3]);
+                    setTimeout(() => spawnNotif(notifMessages[4]), 400); // Rapid fire
+                }
+                if (i === 120) {
+                    spawnNotif(notifMessages[5]);
+                    setTimeout(() => spawnNotif(notifMessages[6]), 300); // Rapid fire
+                }
+
+                if (i === essayText.length) {
+                    clearInterval(typer);
+                    setTimeout(triggerPanic, 800);
+                }
+            }, 45);
+        }
+
+        function triggerPanic() {
+            spawnNotif(notifMessages[7]);
+            showNarrative("Wait, my phone won't stop buzzing. Everyone is talking... I can't do this.");
+            document.getElementById('audio22').play();
+            setTimeout(triggerTimeSkip, 7000);
+        }
+
+        function triggerTimeSkip() {
+            document.getElementById('typingOverlay').style.display = 'none';
+            hideNarrative();
+            document.getElementById('timeSkip').style.display = 'flex';
+            setTimeout(() => { window.location.href = 'Page14.html'; }, 3500);
+        }
+    </script>
+</body>
+</html>

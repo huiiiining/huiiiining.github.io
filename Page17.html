@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>social media post</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; font-family: 'Bitter', serif; }
+        
+        .photobooth { position: relative; width: 100vw; height: 100vh; background: #111; display: none; }
+        .player { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        .photo { display: none; }
+        #counter {
+            position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 51, 133, 0.8); color: white;
+            padding: 5px 15px; border-radius: 20px; font-family: 'Luckiest Guy';
+            z-index: 50; font-size: 1.2rem;
+        }
+
+        #eduOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .edu-box { background: white; width: 85%; max-width: 400px; padding: 30px; border-radius: 25px; text-align: center; border: 4px solid #ff3385; }
+        
+        .strip {
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            height: 90px; display: flex; overflow-x: auto; gap: 10px;
+            z-index: 30; padding: 5px; background: rgba(0,0,0,0.3); border-radius: 10px;
+        }
+        .strip img { 
+            height: 80px; border-radius: 5px; border: 2px solid #555; 
+            cursor: pointer; transition: 0.2s; 
+        }
+        .strip img.selected { border: 4px solid #ff3385; transform: scale(1.05); }
+
+        .shutter-btn {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            width: 80px; height: 80px; background: white; border: 6px solid #ff3385;
+            border-radius: 50%; cursor: pointer; z-index: 40;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .shutter-btn:disabled { background: #555; border-color: #333; cursor: not-allowed; opacity: 0.5; }
+        #postUI {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 320px; background: white; border-radius: 15px; overflow: hidden;
+            display: none; z-index: 200; box-shadow: 0 10px 100px rgba(0,0,0,0.9);
+        }
+        .post-header { padding: 12px; text-align: center; border-bottom: 1px solid #efefef; }
+        #capturedPreview { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .post-caption { padding: 10px; font-size: 0.9rem; text-align: left; }
+        .post-actions { padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+
+        .btn { padding: 12px; width: 100%; border-radius: 25px; border: none; font-family: 'Luckiest Guy'; cursor: pointer; }
+        .btn-pink { background: #ff3385; color: white; }
+        .btn-grey { background: #efefef; color: #333; }
+
+        #choiceEdu {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 3000; display: none;
+            align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="eduOverlay">
+        <div class="edu-box">
+            <h2 style="font-family: 'Luckiest Guy'; color: #ff3385;">CAMERA ACCESS</h2>
+            <p>Ready for a coffee break? Take 5 photos and pick your favorite to post!</p>
+            <button class="btn btn-pink" onclick="requestAccess()">OPEN CAMERA</button>
+        </div>
+    </div>
+
+    <div id="choiceEdu">
+        <div class="edu-box">
+            <h2 id="eduTitle" style="font-family: 'Luckiest Guy';"></h2>
+            <p id="eduBody"></p>
+            <button class="btn btn-pink" onclick="proceedToPage()">CONTINUE STORY</button>
+        </div>
+    </div>
+
+    <div class="photobooth">
+        <div id="counter">0 / 5</div>
+        <video class="player"></video>
+        <canvas class="photo"></canvas>
+        <div class="strip"></div>
+        
+        <button class="shutter-btn" id="shutter" onclick="takePhoto()"></button>
+
+        <div id="postUI">
+            <div class="post-header">
+                <span style="font-size:1rem; font-weight:bold; display:block;">@Olivia_Official</span>
+            </div>
+            
+            <img id="capturedPreview" src="">
+
+            <div class="post-caption">
+                <strong>@Olivia_Official</strong> felt cute might delete later ✨
+            </div>
+
+            <div class="post-actions">
+                <p style="font-size: 0.75rem; color: #777; margin: 0; text-align: center;">Click an image in the strip to change your photo</p>
+                <button class="btn btn-pink" onclick="showEdu(true)">TAG LOCATION</button>
+                <button class="btn btn-grey" onclick="showEdu(false)">POST WITHOUT TAG</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.querySelector('.player');
+        const canvas = document.querySelector('.photo');
+        const strip = document.querySelector('.strip');
+        const ctx = canvas.getContext('2d');
+        const shutter = document.getElementById('shutter');
+        const counter = document.getElementById('counter');
+        let photoCount = 0;
+        let selectedTagged = false;
+
+        function requestAccess() {
+            document.getElementById('eduOverlay').style.display = 'none';
+            document.querySelector('.photobooth').style.display = 'block';
+            getVideo();
+        }
+
+        async function getVideo() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                video.srcObject = stream;
+                video.play();
+            } catch (err) { alert("Camera access denied!"); }
+        }
+
+        function takePhoto() {
+            if (photoCount >= 5) return;
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            const data = canvas.toDataURL('image/jpeg');
+            const img = document.createElement('img');
+            img.src = data;
+            
+            img.onclick = function() { selectPhoto(this); };
+            strip.insertBefore(img, strip.firstChild);
+            
+            photoCount++;
+            counter.innerText = `${photoCount} / 5`;
+
+            if (photoCount === 5) {
+                shutter.disabled = true;
+                shutter.style.display = "none";
+                counter.style.display = "none";
+                selectPhoto(img);
+                document.getElementById('postUI').style.display = 'block';
+            }
+        }
+
+        function selectPhoto(imgElement) {
+            const allImages = strip.querySelectorAll('img');
+            allImages.forEach(img => img.classList.remove('selected'));
+            imgElement.classList.add('selected');
+            document.getElementById('capturedPreview').src = imgElement.src;
+        }
+
+        function showEdu(tagged) {
+            selectedTagged = tagged;
+            const title = document.getElementById('eduTitle');
+            const body = document.getElementById('eduBody');
+            
+            if(tagged) {
+                title.innerText = "THE RISKS OF TAGGING";
+                title.style.color = "#ff3385";
+                body.innerText = "By tagging your exact location, you are leaving a real-time digital footprint. Anyone who follows you online can now see exactly where you are.";
+            } else {
+                title.innerText = "SMART PRIVACY";
+                title.style.color = "#4CAF50";
+                body.innerText = "Good choice! By not tagging your location, you keep your physical movements private. However, remember that background landmarks can still give your location away!";
+            }
+            document.getElementById('choiceEdu').style.display = "flex";
+        }
+
+        function proceedToPage() {
+            window.location.href = "Page18.html";
+        }
+    </script>
+</body>
+</html>

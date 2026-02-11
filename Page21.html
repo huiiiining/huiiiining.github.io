@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In Over Your Head</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@1,400&family=Luckiest+Guy&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; width: 100vw; height: 100vh; font-family: 'Inter', sans-serif; overflow: hidden; }
+
+        #endingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(17, 17, 17, 0.95); color: white; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px; backdrop-filter: blur(10px);
+        }
+        .home-btn {
+            position: fixed; top: 30px; left: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white; padding: 12px 24px; border-radius: 50px;
+            cursor: pointer; font-family: 'Inter', sans-serif; font-weight: bold;
+            text-decoration: none; transition: all 0.3s ease; z-index: 11000;
+        }
+        .home-btn:hover { background: #ff79b0; border-color: #ff79b0; transform: scale(1.05); }
+
+        .ending-banner {
+            background: #ff79b0; color: white; padding: 20px 60px; border-radius: 100px;
+            font-family: 'Luckiest Guy'; font-size: 3rem;
+            box-shadow: 0 0 40px rgba(255, 121, 176, 0.6);
+            animation: slideDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, glow 2s infinite;
+            margin-bottom: 40px;
+            display: flex; align-items: center; gap: 15px;
+        }
+
+        .narrative-sub { font-size: 1.1rem; margin-bottom: 15px; color: #eee; font-weight: bold; }
+        .edu-text { font-size: 1rem; max-width: 600px; line-height: 1.6; color: #ccc; margin-bottom: 40px; font-family: 'Inter', sans-serif; }
+        .continue-hint { font-size: 0.9rem; color: #666; animation: pulse 1.5s infinite; }
+
+        @keyframes slideDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 30px rgba(255, 121, 176, 0.4); } 50% { box-shadow: 0 0 60px rgba(255, 121, 176, 0.8); } }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+    </style>
+</head>
+<body>
+
+    <a href="page1.html" class="home-btn">🏠 HOME PAGE</a>
+
+    <div id="endingOverlay">
+        <div class="ending-banner">
+            ENDING 2/3: IN OVER YOUR HEAD 🛡️
+        </div>
+
+        <p class="narrative-sub">You tried to reason with him, but the situation escalated.</p>
+        
+        <p class="edu-text">
+            In the real world, if digital harassment moves to your doorstep, <strong>do not engage</strong>. 
+            Negotiating with a stalker often gives them exactly what they want: attention and control. 
+            Lock your doors and seek help from authorities or trusted adults immediately.
+        </p>
+
+        <div class="continue-hint">Press any key to discover a new ending...</div>
+    </div>
+
+<script>
+    function handleProgression() {
+        let endingsFound = JSON.parse(localStorage.getItem('socialSnapEndings')) || [];
+        
+        // Mark Endings 1 and 2
+        if (!endingsFound.includes('1')) endingsFound.push('1');
+        if (!endingsFound.includes('2')) endingsFound.push('2');
+
+        localStorage.setItem('socialSnapEndings', JSON.stringify(endingsFound));
+
+        if (endingsFound.length >= 3) {
+            alert("Congratulations! You've uncovered all the dangers of oversharing.");
+            localStorage.removeItem('socialSnapEndings'); 
+            window.location.href = "page1.html"; 
+        } else {
+            window.location.href = "page20.html";
+        }
+    }
+    window.addEventListener('keydown', handleProgression);
+</script>
+
+</body>
+</html>

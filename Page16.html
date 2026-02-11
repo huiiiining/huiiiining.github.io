@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SocialSnap - Escalation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #1a0000; font-family: 'Bitter', serif; }
+        
+        .container { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; padding: 20px; text-align: center; 
+        }
+        #warningBox { 
+            width: 90%; max-width: 600px; background: #222; 
+            border: 4px solid #ff1744; border-radius: 25px; 
+            padding: 40px; box-shadow: 0 0 30px rgba(255, 23, 68, 0.4);
+            animation: shake 0.5s ease-in-out infinite alternate;
+        }
+
+        h1 { font-family: 'Luckiest Guy'; color: #ff1744; font-size: 2.5rem; margin-bottom: 10px; }
+        h2 { color: #ff8a80; font-size: 1.2rem; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .info-text { line-height: 1.6; color: #eee; margin: 20px 0; font-size: 1.05rem; }
+        
+        .consequence-list {
+            text-align: left; background: #333; padding: 20px; border-radius: 15px; 
+            color: #ff8a80; margin: 20px 0; font-size: 0.95rem;
+        }
+
+        .btn-retry {
+            background: #ff1744; color: white; border: none; 
+            padding: 15px 40px; border-radius: 50px; font-family: 'Luckiest Guy';
+            font-size: 1.2rem; cursor: pointer; transition: 0.3s; margin-top: 20px;
+        }
+        .btn-retry:hover { transform: scale(1.05); background: #ff5252; box-shadow: 0 0 20px #ff1744; }
+        @keyframes shake {
+            from { transform: rotate(-0.5deg); }
+            to { transform: rotate(0.5deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="warningBox">
+            <h1>SITUATION ESCALATED</h1>
+            <h2>The Risk of Fighting Back</h2>
+
+            <div class="info-text">
+                <p>Olivia decided to insult the bullies back. While it felt good for a second, the digital footprint of her anger gave the bullies exactly what they wanted: <strong>More fuel.</strong></p>
+            </div>
+
+            
+
+            <div class="consequence-list">
+                <strong>What happened next:</strong>
+                <ul>
+                    <li>The bullies screenshotted Olivia's insults to make HER look like the aggressor.</li>
+                    <li>More students joined in, claiming Olivia was "toxic."</li>
+                    <li>The original problem didn't go away—it just got louder.</li>
+                </ul>
+            </div>
+
+            <p class="info-text" style="font-size: 0.9rem; font-style: italic;">
+                In cyberbullying, responding with hate often "feeds the trolls." The safest move is to stop, block, and tell a trusted adult.
+            </p>
+
+            <button class="btn-retry" onclick="goBack()">TRY THE BETTER PATH</button>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = "Page14.html"; 
+        }
+    </script>
+</body>
+</html>

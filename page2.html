@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Desk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; display: flex; justify-content: center; align-items: center; }
+        .game-container { position: relative; width: 100vw; height: 100vh; }
+        .desk-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(5px); 
+            z-index: 1000; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .phone-mockup {
+            background: #fff;
+            width: 200px; 
+            height: 420px; 
+            border: 10px solid #1a1a1a;
+            border-radius: 35px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            box-shadow: 0 0 40px rgba(255, 51, 133, 0.5);
+            font-family: 'Bitter', serif;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .phone-mockup::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 18px; background: #1a1a1a; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+        .phone-mockup::after { content: ""; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: #ddd; border-radius: 10px; }
+
+        .phone-title { font-family: 'Luckiest Guy', cursive; color: #ff3385; text-align: center; margin-top: 15px; font-size: 1.2rem; }
+        .bubble { background: #fdf2f7; padding: 10px; border-radius: 15px 15px 15px 5px; color: #d81b60; font-weight: 700; margin: 20px 0; line-height: 1.3; font-size: 0.8rem; border: 1px solid #f8bbd0; }
+        .socialsnap-window { 
+            background: #111; 
+            width: 580px; 
+            height: 520px; 
+            border-radius: 20px; 
+            border: 1px solid #444; 
+            overflow: hidden; 
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8); 
+            display: flex;
+            flex-direction: column;
+        }
+        .window-header { background: #1a1a1a; padding: 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #333; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; cursor: pointer; }
+
+    
+        .snap-btn { 
+            display: flex; flex-direction: column; align-items: center; width: 100%; 
+            padding: 12px; border-radius: 12px; font-family: 'Luckiest Guy', cursive; 
+            border: none; cursor: pointer; transition: 0.2s; text-transform: uppercase;
+            text-decoration: none;
+        }
+        .btn-real { background: #ff3385; color: white; box-shadow: 0 4px 0 #b31d55; margin-top: auto; }
+        .btn-fake { background: #1a1a1a; color: #ff3385; border: 2px solid #ff3385; box-shadow: 0 4px 0 #000; margin-top: 12px; }
+
+        .narrative-box {
+            position: fixed;
+            bottom: 2%; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 750px;
+            background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(4px); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 3px solid #f699bf;
+            padding: 10px 30px;
+            border-radius: 50px;
+            text-align: center;
+            z-index: 2000;
+            pointer-events: none;
+        }
+        .narrative-box p { color: #fff; font-family: 'Bitter', serif; font-size: 1.1rem; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    </style>
+</head>
+<body>
+
+    <audio id="monologueAudio"></audio>
+
+    <div class="game-container">
+        <img src="png/desk.png" usemap="#image-map" class="desk-img">
+        <map name="image-map">
+            <area alt="Computer" href="javascript:void(0)" onclick="openModal('computerOverlay')" coords="193,156,255,169,256,113,371,90,420,144,504,132,516,145,526,149,545,172,535,354,530,363,464,380,475,400,476,412,405,431,295,459,273,426,235,433,210,386,189,294,181,177,186,163,189,161" shape="poly">
+            <area alt="Phone" href="javascript:void(0)" onclick="openModal('phoneOverlay')" coords="607,456,662,441,712,536,652,554,604,467" shape="poly">
+        </map>
+    </div>
+
+    <div id="phoneOverlay" class="modal-overlay" onclick="closeModal('phoneOverlay')">
+        <div class="phone-mockup" onclick="event.stopPropagation()">
+            <h3 class="phone-title">Messages</h3>
+            <div class="bubble">💬 Bestie: "OMGG Olivia! You HAVE to check out SocialSnap! ✨"</div>
+            <button class="snap-btn btn-real" onclick="closeModal('phoneOverlay')">PUT DOWN</button>
+        </div>
+    </div>
+
+    <div id="computerOverlay" class="modal-overlay" onclick="closeModal('computerOverlay')">
+        <div class="socialsnap-window" onclick="event.stopPropagation()">
+            <div class="window-header">
+                <div class="dot red" onclick="closeModal('computerOverlay')"></div>
+                <div class="dot yellow"></div><div class="dot green"></div>
+                <span style="color:#666; font-size:0.75rem; margin-left:10px; font-family:'Bitter';">https://socialsnap.io/signup</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 40px; text-align: center;">
+                <h1 style="font-family:'Luckiest Guy', cursive; color:#ff3385; margin:0; font-size: 3.2rem;">SocialSnap</h1>
+                <p style="color:#888; font-family:'Bitter'; margin: 10px 0 30px 0;">Verify your identity.</p>
+                <div class="button-stack" style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+                    <a href="Page3.html" class="snap-btn btn-real">SIGN UP (REAL AGE)</a>
+                    <a href="Page4.html" class="snap-btn btn-fake">SIGN UP (18+)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="narrativeBox" class="narrative-box">
+        <p id="narrativeText">"My phone is buzzing... Let me check who is messaging me."</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/image-map-resizer/1.0.10/js/imageMapResizer.min.js"></script>
+    <script>
+        let hasCheckedPhone = false;
+
+        function playMonologue(scene) {
+            const audio = document.getElementById('monologueAudio');
+            const text = document.getElementById('narrativeText');
+            if (scene === 1) {
+                text.innerText = '"My phone is buzzing... Let me check who is messaging me."';
+                audio.src = "audio/olivia_1.mp3";
+            } else if (scene === 2) {
+                text.innerText = '"That sounds interesting, let me check it out on my computer!"';
+                audio.src = "audio/olivia_2.mp3";
+            } else if (scene === 3) {
+                text.innerText = '"Hmmm... it says that I have to input my age... should I put my real age or lie about my age?"';
+                audio.src = "audio/olivia_3.mp3";
+            }
+            audio.play().catch(e => console.log("Audio waiting for interaction."));
+        }
+
+        function openModal(id) {
+            if (id === 'phoneOverlay') playMonologue(2);
+            if (id === 'computerOverlay') {
+                if (!hasCheckedPhone) {
+                    document.getElementById('narrativeText').innerText = "I should check my phone first...";
+                    return;
+                }
+                playMonologue(3);
+            }
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            if (id === 'phoneOverlay') hasCheckedPhone = true;
+        }
+
+        window.onload = function() {
+            imageMapResize();
+            setTimeout(() => playMonologue(1), 1000);
+        };
+    </script>
+</body>
+</html>

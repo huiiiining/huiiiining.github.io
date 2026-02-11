@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with Ryan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background-color: #fdfdfd; font-family: 'Bitter', serif;
+            overflow: hidden;
+        }
+        .chat-container { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+        .chat-header { 
+            background: linear-gradient(135deg, #ff79b0 0%, #ffb6c1 100%); 
+            padding: 50px 20px 15px; display: flex; align-items: center; color: white;
+        }
+        .mini-profile { width: 40px; height: 40px; background: rgba(255,255,255,0.3); border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; }
+        .message-area { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: #fff; }
+        
+        .bubble { max-width: 75%; padding: 12px 18px; border-radius: 25px; font-size: 1rem; line-height: 1.4; }
+        .ryan-msg { background: #f1f1f1; color: #222; align-self: flex-start; border-bottom-left-radius: 5px; }
+        .typing { display: none; align-self: flex-start; background: #f1f1f1; padding: 12px 18px; border-radius: 25px; }
+        .dot { height: 8px; width: 8px; background: #bbb; border-radius: 50%; display: inline-block; animation: bounce 1.3s infinite; margin: 0 2px; }
+        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+        .choice-footer { position: fixed; bottom: 140px; width: 100%; display: none; justify-content: center; gap: 10px; padding: 10px; box-sizing: border-box; z-index: 10; }
+        .btn-choice { flex: 1; max-width: 300px; padding: 15px; border-radius: 30px; border: 2px solid #ff79b0; background: #ff79b0; color:white; font-weight: bold; cursor: pointer; font-family: 'Bitter'; transition: 0.3s; }
+        .btn-choice:hover { background: #ff79b0; color: white; }
+           .narrative-box {
+            position: fixed;
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 700px;
+            background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); 
+            border-top: 3px solid#f699bf;
+            padding: 10px;
+            border-radius: 30px;
+            text-align: center;
+            z-index: 200;
+        }
+         .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; }
+
+        .choice-warning {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; max-width: 420px; background: white; padding: 30px;
+            border-radius: 25px; border: 4px solid #ff79b0; text-align: center;
+            z-index: 5000; display: none; 
+            box-shadow: 0 0 0 100vw rgba(0,0,0,0.7); 
+        }
+        .choice-warning h3 { font-family: 'Luckiest Guy'; color: #ff79b0; margin: 0 0 10px; }
+        .choice-warning p { color: #444; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <audio id="ping" src="audio/sfx_notification.mp3" preload="auto"></audio>
+    <audio id="audio10" src="audio/Olivia_10.mp3" preload="auto"></audio>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="mini-profile">👤</div>
+            <strong>Ryan (@Ryan_Real)</strong>
+        </div>
+        <div class="message-area" id="msgArea">
+            <div class="typing" id="typingDots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+        <div class="choice-footer" id="choiceFooter">
+            <button class="btn-choice" onclick="selectChoice('friendly')">"Hey! Thanks for the follow."</button>
+            <button class="btn-choice" onclick="selectChoice('flirty')">"Aw, thanks! You're not so bad yourself."</button>
+        </div>
+    </div>
+
+    <div id="warnFriendly" class="choice-warning">
+        <h3>Be Careful!</h3>
+        <p>Being polite is nice, but responding to a total stranger confirms that your account is <strong>active</strong> and you are willing to talk.</p>
+        <button class="btn-choice" onclick="goToPage8()">Got it, continue</button>
+    </div>
+
+    <div id="warnFlirty" class="choice-warning">
+        <h3>Red Flag Alert!</h3>
+        <p>Ryan is using <strong>"Love Bombing."</strong> By complimenting you immediately, he's trying to build fast trust before you actually know him.</p>
+        <button class="btn-choice" onclick="goToPage8()">I'll be careful, continue</button>
+    </div>
+
+    <div class="narrative-box" id="narrativeBox">
+        <p id="narrativeText">Oh! A message already? That was fast... and a bit forward. How should I respond?</p>
+    </div>
+    <script>
+    const typing = document.getElementById('typingDots');
+    const msgArea = document.getElementById('msgArea');
+    const footer = document.getElementById('choiceFooter');
+    const narrative = document.getElementById('narrativeBox');
+    const narrativeText = document.getElementById('narrativeText');
+    const a10 = document.getElementById('audio10');
+    const ping = document.getElementById('ping');
+
+    // 1. Hide narrative box and prepare it for a fade-in
+    narrative.style.display = 'none';
+    narrative.style.opacity = '0';
+    narrative.style.transition = 'opacity 0.5s ease';
+
+    window.onload = function() {
+        setTimeout(() => {
+            typing.style.display = 'block';
+            setTimeout(() => {
+                typing.style.display = 'none';
+                if(ping) ping.play();
+
+                const msg = document.createElement('div');
+                msg.className = 'bubble ryan-msg';
+                msg.innerText = "hey gurl, i think you're really pretty. 😉";
+                msgArea.insertBefore(msg, typing);
+                if(a10) a10.play();
+            }, 3000);
+        }, 1000);
+    };
+
+    a10.addEventListener('play', () => {
+        narrative.style.display = 'block';
+        setTimeout(() => { narrative.style.opacity = '1'; }, 50); 
+    });
+
+    a10.addEventListener('timeupdate', () => {
+        const time = a10.currentTime;
+        if (time < 2.5) {
+            narrativeText.innerText = "Oh! A message already?";
+        } else if (time >= 2.5 && time < 4.5) {
+            narrativeText.innerText = "That was fast... and a bit forward.";
+        } else if (time >= 4.5) {
+            narrativeText.innerText = "How should I respond?";
+        }
+    });
+
+
+    a10.onended = function() {
+        footer.style.display = 'flex';
+    };
+
+    function selectChoice(val) {
+        localStorage.setItem('ryan_path', val);
+        footer.style.display = 'none';
+        narrative.style.display = 'none';
+
+        if (val === 'friendly') {
+            document.getElementById('warnFriendly').style.display = 'block';
+        } else if (val === 'flirty') {
+            document.getElementById('warnFlirty').style.display = 'block';
+        }
+    }
+
+    function goToPage8() {
+        document.body.style.transition = "opacity 0.8s";
+        document.body.style.opacity = "0";
+        setTimeout(() => { window.location.href = "Page8.html"; }, 800);
+    }
+</script>
+</body>
+</html>

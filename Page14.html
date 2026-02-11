@@ -1,0 +1,185 @@
+HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Odd One Out</output></title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; font-family: 'Bitter', serif; }
+        
+        .bg-container { position: relative; width: 100vw; height: 100vh; }
+        .hallway-img { width: 100%; height: 100%; object-fit: cover; filter: blur(4px) brightness(0.5); transition: all 1.5s ease; }
+
+        .whisper-text {
+            position: fixed; color: rgba(255, 220, 230, 0.8); font-style: italic;
+            font-size: 1.3rem; text-shadow: 2px 2px 8px rgba(0,0,0,1);
+            pointer-events: none; animation: fadeRise 3.5s forwards; z-index: 4000;
+        }
+
+        @keyframes fadeRise {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0px); }
+            100% { opacity: 0; transform: translateY(-30px); }
+        }
+
+        .notif {
+            position: fixed; left: 20px; width: 280px; 
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000; font-family: Arial, sans-serif; 
+            opacity: 0; transform: translateX(-50px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .notif.show { opacity: 1; transform: translateX(0); }
+        
+        .notif.snap { border-left: 6px solid #ff3385; }
+        .notif.snap .app-name { color: #ff3385; font-size: 0.7rem; font-weight: bold; }
+        
+        .notif.msg { border-left: 6px solid #34C759; }
+        .notif.msg .app-name { color: #34C759; font-size: 0.7rem; font-weight: bold; }
+
+        .notif-user { font-weight: bold; display: block; font-size: 0.85rem; margin-top: 2px; }
+        .notif-text { font-size: 0.85rem; color: #333; }
+        .choice-container {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: none; 
+            flex-direction: row; 
+            gap: 40px; 
+            z-index: 5000;
+            width: 90%;
+            justify-content: center;
+        }
+        .btn-choice {
+            background: #ff3385; color: white; border: none; 
+            padding: 25px 30px;
+            width: 280px; 
+            border-radius: 50px; font-family: 'Luckiest Guy'; font-size: 1.2rem; 
+            cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.5); transition: 0.3s;
+            text-align: center;
+        }
+        .btn-choice:hover { transform: scale(1.1); background: #ff5c9d; }
+        .narrative-box {
+            position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 700px; background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); border-top: 3px solid #f699bf;
+            padding: 15px; border-radius: 30px; text-align: center; 
+            z-index: 3000; display: none; opacity: 0; transition: opacity 0.8s ease;
+        }
+        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); }
+    </style>
+</head>
+<body>
+
+    <audio id="ping" src="audio/sfx_Notification.mp3"></audio>
+    <audio id="crowdSfx" src="audio/sfx_crowd.mp3" loop></audio>
+    <audio id="audio23" src="audio/Olivia_23.mp3"></audio>
+
+    <div class="bg-container">
+        <img src="png/hallway.png" class="hallway-img" id="hallwayImg">
+    </div>
+
+    <div id="notifArea"></div>
+
+    <div class="narrative-box" id="hallwayThought">
+        <p>"Everyone is looking at their phones... then looking at me. I'm getting messages from people I don't even know. I can't stay quiet forever, can I?"</p>
+    </div>
+
+    <div class="choice-container" id="choiceMenu">
+        <button class="btn-choice" onclick="selectChoice('ignore')">IGNORE & REPORT</button>
+        <button class="btn-choice" onclick="selectChoice('insult')">INSULT THEM BACK</button>
+    </div>
+
+    <script>
+        const speculation = ["Is that her?", "I saw the video...", "Total drama.", "She's actually here."];
+        
+        const notifications = [
+            { type: 'snap', user: 'Class_Group_Chat', text: 'OMG Olivia just walked in.', top: '10%' },
+            { type: 'msg', user: 'Mark (History)', text: 'Dude, everyone is talking. R u okay?', top: '22%' },
+            { type: 'snap', user: 'Unknown', text: 'We all saw it. 💀', top: '34%' },
+            { type: 'msg', user: 'Mom', text: 'Olivia, the school called. Please answer me.', top: '46%' }
+        ];
+
+        window.onload = function() {
+            const crowd = document.getElementById('crowdSfx');
+            crowd.volume = 0.2; 
+            crowd.play();
+            
+            let i = 0;
+            const rumorInterval = setInterval(() => {
+                if (i < speculation.length) {
+                    createWhisper(speculation[i]);
+                    i++;
+                } else {
+                    clearInterval(rumorInterval);
+                    setTimeout(startMainScene, 1000);
+                }
+            }, 1000);
+        };
+
+        function createWhisper(text) {
+            const w = document.createElement('div');
+            w.className = 'whisper-text';
+            w.innerText = text;
+            w.style.top = (Math.random() * 50 + 20) + "%";
+            w.style.left = (Math.random() * 50 + 20) + "%";
+            document.body.appendChild(w);
+            setTimeout(() => w.remove(), 4000);
+        }
+
+        function startMainScene() {
+            const hallwayImg = document.getElementById('hallwayImg');
+            const narrative = document.getElementById('hallwayThought');
+            
+            hallwayImg.style.filter = "blur(2px) brightness(0.6)";
+            narrative.style.display = 'block';
+            setTimeout(() => { narrative.style.opacity = '1'; }, 50);
+            
+            document.getElementById('audio23').play();
+            
+            notifications.forEach((n, index) => {
+                setTimeout(() => spawnNotif(n), 1000 + (index * 1500));
+            });
+
+            setTimeout(showChoices, 8500);
+        }
+
+        function spawnNotif(data) {
+            const area = document.getElementById('notifArea');
+            const n = document.createElement('div');
+            n.className = `notif ${data.type}`;
+            n.style.top = data.top;
+            
+            const appLabel = data.type === 'snap' ? 'SocialSnap' : 'Messages';
+            n.innerHTML = `
+                <div class="app-name">${appLabel}</div>
+                <span class="notif-user">${data.user}</span>
+                <span class="notif-text">${data.text}</span>
+            `;
+            
+            area.appendChild(n);
+            const ping = document.getElementById('ping').cloneNode(true);
+            ping.volume = 0.4;
+            ping.play();
+            setTimeout(() => n.classList.add('show'), 100);
+        }
+
+        function showChoices() {
+            const narrative = document.getElementById('hallwayThought');
+            narrative.style.opacity = '0';
+            setTimeout(() => { narrative.style.display = 'none'; }, 800);
+
+            document.getElementById('choiceMenu').style.display = 'flex';
+            document.getElementById('hallwayImg').style.filter = "blur(15px) brightness(0.2)";
+        }
+
+        function selectChoice(path) {
+            if (path === 'ignore') {
+                window.location.href = "Page15.html"; 
+            } else {
+                window.location.href = "Page16.html"; 
+            }
+        }
+    </script>
+</body>
+</html>

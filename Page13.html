@@ -1,0 +1,143 @@
+HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Action Taken</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Bitter', serif; background: #000; }
+        
+        .mirror-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('png/mirror.png') no-repeat center center;
+            background-size: cover;
+            z-index: 1;
+        }
+
+        #appLayer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .report-modal {
+            width: 85%; max-width: 400px; background: #fff;
+            border: 3px solid #ff3385; border-radius: 20px;
+            padding: 30px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .check-icon { font-size: 5rem; color: #28a745; margin-bottom: 10px; }
+        h1 { font-family: 'Luckiest Guy', cursive; color: #ff3385; margin: 0; font-size: 2rem; }
+        .status-msg { color: #444; line-height: 1.6; margin: 20px 0 30px; }
+
+        .btn-next {
+            background: #ff3385; color: white; border: none; padding: 15px 40px;
+            border-radius: 50px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 51, 133, 0.4);
+        }
+        .narrative-box {
+            position: fixed;
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 700px;
+            background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); 
+            border-top: 3px solid #f699bf;
+            padding: 10px;
+            border-radius: 30px;
+            text-align: center;
+            z-index: 5000; 
+            display: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .narrative-box p { 
+            color: #ffcdd2; 
+            margin: 0; 
+            font-size: 0.95rem; 
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); 
+        }
+
+        #timeSkipOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); color: #fff; z-index: 6000;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .time-text { font-size: 2rem; font-style: italic; opacity: 0; font-family: 'Bitter'; }
+
+        @keyframes fadeOutText { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <audio id="olivia19" src="audio/Olivia_19.mp3"></audio>
+
+    <div class="mirror-bg"></div>
+
+    <div id="appLayer">
+        <div class="report-modal">
+            <div class="check-icon">✓</div>
+            <h1>Action Taken!</h1>
+            <p class="status-msg">SocialSnap has reviewed your report. The AI-generated video has been <b>removed</b> for violating our safety policies.</p>
+            <button class="btn-next" onclick="transitionToMirror()">Continue</button>
+        </div>
+    </div>
+
+    <div class="narrative-box" id="thoughtsBox">
+        <p>"The video is gone... but everyone in the group already saw it. I'm so embarrassed to go to school tomorrow."</p>
+    </div>
+
+    <div id="timeSkipOverlay">
+        <p class="time-text" id="timeLabel">Monday Morning...</p>
+    </div>
+
+    <script>
+        const audio = document.getElementById('olivia19');
+        const thoughts = document.getElementById('thoughtsBox');
+        audio.onplay = function() {
+            thoughts.style.display = 'block';
+            setTimeout(() => { thoughts.style.opacity = '1'; }, 50);
+        };
+
+        function transitionToMirror() {
+            const app = document.getElementById('appLayer');
+            app.style.opacity = '0';
+            
+            setTimeout(() => {
+                app.style.display = 'none';
+                audio.play();
+                setTimeout(startTimeSkip, 5500);
+            }, 800);
+        }
+
+        function startTimeSkip() {
+            thoughts.style.opacity = '0';
+            
+            setTimeout(() => {
+                thoughts.style.display = 'none';
+                const skipOverlay = document.getElementById('timeSkipOverlay');
+                skipOverlay.style.display = 'flex';
+
+                const label = document.getElementById('timeLabel');
+                label.style.animation = "fadeOutText 3s forwards";
+
+                setTimeout(() => {
+                    window.location.href = 'Page14.html';
+                }, 3500);
+            }, 800);
+        }
+    </script>
+</body>
+</html>

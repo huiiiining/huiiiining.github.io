@@ -1,0 +1,226 @@
+HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialSnap Admin - Predator View</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; cursor: crosshair; }
+        body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; background: #000; color: #fff; font-family: 'Bitter', serif; overflow: hidden; }
+
+        /* --- New Intro Overlay --- */
+        #introOverlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 5000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            transition: opacity 1s ease;
+        }
+        .warning-text { 
+            color: #ff3385; font-family: 'Luckiest Guy'; font-size: 2.5rem; 
+            letter-spacing: 2px; margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 51, 133, 0.7);
+        }
+        .instruction-text { font-style: italic; color: #ccc; font-size: 1.1rem; max-width: 500px; line-height: 1.5; }
+        
+        /* --- Desktop Environment --- */
+        .desktop-environment {
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; opacity: 0; transition: opacity 2s ease;
+        }
+
+        .monitor-frame {
+            width: 95vw; height: 90vh; background: #111;
+            border: 25px solid #222; border-radius: 15px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 0 150px rgba(0,0,0,1), inset 0 0 50px rgba(255, 51, 133, 0.05);
+        }
+
+        /* Subtle reflection of Ryan */
+        .monitor-frame::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('ryan_reflection.png') center/cover;
+            opacity: 0.12; pointer-events: none; z-index: 1000;
+        }
+
+        .browser-window { width: 100%; height: 100%; background: #fff; display: flex; flex-direction: column; }
+        .browser-bar { background: #d0d0d0; padding: 12px; display: flex; align-items: center; border-bottom: 2px solid #bbb; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; }
+
+        .feed-container { flex-grow: 1; display: flex; overflow: hidden; color: #222; }
+        .profile-sidebar { width: 25%; border-right: 1px solid #ddd; padding: 30px 15px; text-align: center; background: #f9f9f9; }
+        .pfp { width: 110px; height: 110px; border-radius: 50%; background: #ccc; margin: 0 auto 15px; border: 4px solid #ff3385; }
+
+        .photo-grid { width: 75%; padding: 25px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; overflow-y: auto; }
+        
+        .grid-item { 
+            aspect-ratio: 1/1; background: #eee; position: relative; 
+            border: 4px solid transparent; transition: all 0.2s ease; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- Hint: Pulsing border to suggest clicking --- */
+        .grid-item:not(.analyzed) {
+            animation: hintPulse 2s infinite;
+        }
+
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); display: block; }
+        .grid-item:hover { border-color: #ff3385; transform: scale(1.02); z-index: 5; }
+        .grid-item.analyzed { border-color: #ff3385; filter: brightness(1.1); box-shadow: 0 0 15px rgba(255, 51, 133, 0.4); animation: none; }
+
+        #logsdrypted {
+            position: fixed; bottom: 5%; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 700px;
+            background: rgba(20, 0, 10, 0.9); backdrop-filter: blur(10px);
+            border: 3px solid #ff3385; padding: 20px; border-radius: 30px;
+            text-align: center; z-index: 2000; display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        #logsdrypted p { color: #fff; margin: 0; font-style: italic; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
+
+        .next-btn {
+            position: absolute; bottom: 30px; right: 40px; 
+            background: #ff3385; color: white; border: none; 
+            padding: 18px 40px; border-radius: 40px; font-family: 'Luckiest Guy';
+            cursor: pointer; z-index: 3000; display: none;
+            box-shadow: 0 0 20px rgba(255, 51, 133, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes hintPulse {
+            0% { border-color: transparent; }
+            50% { border-color: rgba(255, 51, 133, 0.3); }
+            100% { border-color: transparent; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    </style>
+</head>
+<body>
+
+<audio id="audio_Ryan_1" src="audio/Ryan_1.mp3"></audio>
+<audio id="audio_Ryan_2" src="audio/Ryan_2.mp3"></audio>
+<audio id="audio_Ryan_3" src="audio/Ryan_3.mp3"></audio>
+<audio id="audio_Ryan_4" src="audio/Ryan_4.mp3"></audio>
+<audio id="audio_Ryan_5" src="audio/Ryan_5.mp3"></audio>
+<audio id="audio_Ryan_6" src="audio/Ryan_6.mp3"></audio>
+<audio id="uiClick" src="audio/sfx_Click.mp3"></audio>
+<audio id="glitchSfx" src="audio/sfx_Glitch.mp3"></audio>
+
+<div id="introOverlay">
+    <h1 class="warning-text">PERSPECTIVE SHIFT</h1>
+    <p class="instruction-text">
+        Let’s see how a predator analyzes Olivia’s digital footprint.<br><br>
+        <strong>Click on each photo to harvest data.</strong>
+    </p>
+    <button class="next-btn" style="display:block; position:relative; bottom:0; right:0; margin-top:30px;" onclick="beginAnalysis()">ACCESS FEED</button>
+</div>
+
+<div class="desktop-environment" id="mainEnv">
+    <div class="monitor-frame">
+        <div class="browser-window">
+            <div class="browser-bar">
+                <div class="dot" style="background:#ff5f56"></div>
+                <div class="dot" style="background:#ffbd2e"></div>
+                <div class="dot" style="background:#27c93f"></div>
+                <div style="background:white; flex-grow:1; margin-left:15px; border-radius:4px; padding:4px 12px; font-size:13px; color:#666; border:1px solid #ccc;">
+                    socialsnap.com/Olivia_Official/feed
+                </div>
+            </div>
+
+            <div class="feed-container">
+                <div class="profile-sidebar">
+                    <div class="pfp"></div>
+                    <h2 style="margin:0; font-family:'Luckiest Guy'; color:#ff3385;">Olivia Official</h2>
+                    <p style="margin:5px 0 20px 0; color:#888;">@Olivia_Official</p>
+                    <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+                    <p style="font-size:0.75rem; color:#aaa; font-weight:bold;">DATA HARVESTED: <span id="dataCount" style="color:#ff3385;">0</span>/6</p>
+                </div>
+
+                <div class="photo-grid">
+                    <div class="grid-item" onclick="ryanAnalyze(1, this)"><img src="png/park.png"></div>
+                    <div class="grid-item" onclick="ryanAnalyze(2, this)"><img src="png/school.png"></div>
+                    <div class="grid-item" onclick="ryanAnalyze(3, this)"><img src="png/cafe.png"></div>
+                    <div class="grid-item" onclick="ryanAnalyze(4, this)"><img src="png/home.png"></div>
+                    <div class="grid-item" onclick="ryanAnalyze(5, this)"><img src="png/schedule.png"></div>
+                    <div class="grid-item" onclick="ryanAnalyze(6, this)"><img src="png/street.png"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="logsdrypted" onclick="closeAnalysis()">
+            <h4 style="margin:0 0 10px 0; color:#ff3385; font-family:'Luckiest Guy';">LOG DECRYPTED</h4>
+            <p id="monoText"></p>
+            <small style="color: #ff3385; display:block; margin-top:10px; cursor:pointer;">[CLICK TO CLOSE]</small>
+        </div>
+
+        <button class="next-btn" id="nextBtn" onclick="location.href='Page19.html'">LOCATE TARGET</button>
+    </div>
+</div>
+
+<script>
+    let analyzedSet = new Set();
+    let currentAudio = null;
+
+    const monologues = {
+        'Ryan_1': "That archway... City Park. She thinks she's safe, but she's just providing more breadcrumbs for my grooming process.",
+        'Ryan_2': "The 'Oak Hills Academy' lanyard is a classic passive leak. My catfishing persona as 'Ryan' worked; she'd never guess I'm an older man.",
+        'Ryan_3': "A simple 'Pink Bean' coffee mug... There's only one in this district. This is how photos help me form a map to locate where she stays.",
+        'Ryan_4': "Mirror selfie... I can see the street number '12' reflected. The dangers of tagging exist in every pixel.",
+        'Ryan_5': "Her class schedule... now I know her routine as well...",
+        'Ryan_6': "Route 42 bus stop... My search is complete. I've successfully found her location without her even knowing."
+    };
+
+    function beginAnalysis() {
+        document.getElementById('glitchSfx').play();
+        document.getElementById('introOverlay').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('introOverlay').style.display = 'none';
+            document.getElementById('mainEnv').style.opacity = '1';
+        }, 1000);
+    }
+
+    function ryanAnalyze(idNum, element) {
+        const id = "Ryan_" + idNum;
+        
+        if (currentAudio) { 
+            currentAudio.pause(); 
+            currentAudio.currentTime = 0; 
+        }
+        
+        const uiClick = document.getElementById('uiClick');
+        if(uiClick) uiClick.play().catch(e => console.log("SFX error"));
+
+        document.querySelectorAll('.grid-item').forEach(el => el.classList.remove('analyzed'));
+        element.classList.add('analyzed');
+        
+        document.getElementById('monoText').innerText = monologues[id];
+        document.getElementById('logsdrypted').style.display = 'block';
+
+        currentAudio = document.getElementById('audio_' + id);
+        if (currentAudio) { 
+            currentAudio.play().catch(e => console.log("Audio file missing")); 
+        }
+
+        analyzedSet.add(idNum);
+        document.getElementById('dataCount').innerText = analyzedSet.size;
+
+        if (analyzedSet.size === 6) {
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+    }
+
+    function closeAnalysis() {
+        if (currentAudio) { 
+            currentAudio.pause(); 
+            currentAudio.currentTime = 0; 
+        }
+        document.getElementById('logsdrypted').style.display = 'none';
+    }
+</script>
+</body>
+</html>

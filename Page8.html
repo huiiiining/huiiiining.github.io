@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>One Month Later</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background-color: #fdfdfd; font-family: 'Bitter', serif;
+            overflow: hidden;
+        }
+
+    
+        #timeSkip {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; color: white; z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Luckiest Guy', cursive; font-size: 2.5rem;
+            transition: opacity 1.5s ease;
+        }
+        .chat-container { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+        .chat-header { 
+            background: linear-gradient(135deg, #ff79b0 0%, #ffb6c1 100%); 
+            padding: 50px 20px 15px; display: flex; align-items: center; color: white;
+        }
+        .mini-profile { width: 40px; height: 40px; background: rgba(255,255,255,0.3); border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; }
+        .message-area { 
+            flex: 1; padding: 20px; 
+            padding-bottom: 350px; 
+            display: flex; flex-direction: column; gap: 15px; 
+            background: #fff; overflow-y: scroll; scroll-behavior: smooth;
+        }
+        
+        .bubble { max-width: 75%; padding: 12px 18px; border-radius: 25px; font-size: 1rem; line-height: 1.4; }
+        .ryan-msg { background: #f1f1f1; color: #222; align-self: flex-start; border-bottom-left-radius: 5px; }
+        .olivia-msg { background: #ff79b0; color: white; align-self: flex-end; border-bottom-right-radius: 5px; }
+        .timestamp { align-self: center; font-size: 0.8rem; color: #bbb; margin: 10px 0; font-style: italic; }
+        .typing { display: none; align-self: flex-start; background: #f1f1f1; padding: 12px 18px; border-radius: 25px; }
+        .dot { height: 8px; width: 8px; background: #bbb; border-radius: 50%; display: inline-block; animation: bounce 1.3s infinite; margin: 0 2px; }
+        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+
+    
+        .choice-footer { position: fixed; bottom: 140px; width: 100%; display: none; justify-content: center; gap: 10px; padding: 10px; box-sizing: border-box; z-index: 200; }
+        .btn-choice { flex: 1; max-width: 300px; padding: 15px; border-radius: 30px; border: 2px solid #ff79b0; background: #ff79b0; color:white; font-weight: bold; cursor: pointer; font-family: 'Bitter'; transition: 0.3s; }
+
+   
+         .narrative-box {
+            position: fixed;
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 700px;
+            background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); 
+            border-top: 3px solid#f699bf;
+            padding: 10px;
+            border-radius: 30px;
+            text-align: center;
+            z-index: 200;
+        }
+         .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; }
+         .narrative-box {
+        position: fixed;
+        bottom: 2%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 85%;
+        max-width: 700px;
+        background: rgba(255, 182, 193, 0.2); 
+        backdrop-filter: blur(8px); 
+        border-top: 3px solid #f699bf;
+        padding: 15px;
+        border-radius: 30px;
+        text-align: center;
+        z-index: 200;
+        display: none; 
+        opacity: 0;
+        transition: opacity 0.8s ease; 
+    }
+        .choice-warning {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; max-width: 420px; background: white; padding: 30px;
+            border-radius: 25px; border: 4px solid #ff79b0; text-align: center;
+            z-index: 5000; display: none; 
+            box-shadow: 0 0 0 100vw rgba(0,0,0,0.7); 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timeSkip">ONE MONTH LATER...</div>
+
+    <audio id="ping" src="audio/sfx_notification.mp3"></audio>
+    <audio id="audio14" src="audio/Olivia_13.mp3"></audio>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="mini-profile">👤</div>
+            <strong>Ryan (@Ryan_Real)</strong>
+        </div>
+        
+        <div class="message-area" id="msgArea">
+            <div class="timestamp">October 14</div>
+            <div class="bubble ryan-msg">that movie was so good right?</div>
+            <div class="bubble olivia-msg">yeah i loved the ending!</div>
+            <div class="timestamp">October 22</div>
+            <div class="bubble ryan-msg">hope your math test went well today</div>
+            <div class="bubble olivia-msg">it was okay! thanks for asking</div>
+            <div class="timestamp">Today</div>
+            
+            <div class="typing" id="typingDots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <div class="choice-footer" id="choiceFooter">
+            <button class="btn-choice" onclick="selectChoice('refuse')">"I don't really send selfies."</button>
+            <button class="btn-choice" onclick="selectChoice('send')">"Okay, just one!"</button>
+        </div>
+    </div>
+<div id="warnRefuse" class="choice-warning">
+    <h3>Smart Move! 🛡️</h3>
+    <p>Trust takes time. Even after a month, you don't owe anyone your digital image if it makes you uncomfortable.</p>
+    <button class="btn-choice" onclick="goToPage9()">Continue</button>
+</div>
+
+<div id="warnSend" class="choice-warning">
+    <h3>Danger Zone! 🚩</h3>
+    <p>Predators use <strong>"The Long Game"</strong> to make you feel safe. Once you send a photo, you lose control over where it ends up.</p>
+    <button class="btn-choice" onclick="goToPage10()">Continue</button>
+</div>
+
+    <div class="narrative-box" id="narrativeBox">
+        <p id="narrativeText">He's been so nice lately, but a selfie feels... different. How should I respond?</p>
+    </div>
+<div id="ending1">
+    <h1>ENDING 1: STRANGER DANGER 🛡️</h1>
+    <p>By refusing to send a photo, you protected your digital identity. <br><br>
+    In the real world, this is where the story <strong>should</strong> end. Real friends won't pressure you after you say no.</p>
+    <div class="blink">Press any key to try the other path...</div>
+</div>
+    <script>
+        const typing = document.getElementById('typingDots');
+        const msgArea = document.getElementById('msgArea');
+        const footer = document.getElementById('choiceFooter');
+        const narrative = document.getElementById('narrativeBox');
+        const timeSkip = document.getElementById('timeSkip');
+        const ping = document.getElementById('ping');
+        const a14 = document.getElementById('audio14');
+
+        window.onload = function() {
+            setTimeout(() => {
+                timeSkip.style.opacity = '0';
+                setTimeout(() => { timeSkip.style.display = 'none'; }, 1500);
+            }, 2000);
+            setTimeout(() => {
+                msgArea.scrollTop = msgArea.scrollHeight;
+                typing.style.display = 'block';
+                
+                setTimeout(() => {
+                    typing.style.display = 'none';
+                    if(ping) ping.play();
+
+                    const msg = document.createElement('div');
+                    msg.className = 'bubble ryan-msg';
+                    msg.innerText = "we've been talking for a while now and i still don't know what u look like today. send a selfie? 😊";
+                    msgArea.insertBefore(msg, typing);
+                    msgArea.scrollTo(0, msgArea.scrollHeight);
+
+                    narrative.style.display = 'block';
+                    if(a14) a14.play();
+                    
+                    setTimeout(() => { footer.style.display = 'flex'; }, 1000);
+                }, 3000);
+            }, 3500);
+        };
+
+        function selectChoice(val) {
+            footer.style.display = 'none';
+            narrative.style.display = 'none';
+            if (val === 'refuse') {
+                document.getElementById('warnRefuse').style.display = 'block';
+            } else {
+                document.getElementById('warnSend').style.display = 'block';
+            }
+        }
+
+        function goToPage9() {
+            document.body.style.transition = "opacity 0.8s";
+            document.body.style.opacity = "0";
+            setTimeout(() => { window.location.href = "Page9.html"; }, 800);
+        }
+        function triggerChat() {
+        msgArea.scrollTop = msgArea.scrollHeight;
+        typing.style.display = 'block';
+        
+        setTimeout(() => {
+            typing.style.display = 'none';
+            if(ping) ping.play();
+
+            const msg = document.createElement('div');
+            msg.className = 'bubble ryan-msg';
+            msg.innerText = "we've been talking for a while now and i still don't know what u look like today. send a selfie? 😊";
+            msgArea.insertBefore(msg, typing);
+            msgArea.scrollTo(0, msgArea.scrollHeight);
+            if(a14) a14.play();
+        }, 3000);
+    }
+    a14.onplay = function() {
+        narrative.style.display = 'block';
+        narrativeText.innerText = "He's been so nice lately, but a selfie feels... different. How should I respond?";
+        setTimeout(() => { 
+            narrative.style.opacity = '1'; 
+        }, 50);
+    };
+
+    a14.onended = function() {
+        footer.style.display = 'flex';
+    };
+    function selectChoice(val) {
+    footer.style.display = 'none';
+    narrative.style.display = 'none';
+    if (val === 'refuse') {
+        document.getElementById('warnRefuse').style.display = 'block';
+    } else {
+        document.getElementById('warnSend').style.display = 'block';
+    }
+}
+function goToPage9() {
+    document.body.style.transition = "opacity 0.8s";
+    document.body.style.opacity = "0";
+    setTimeout(() => { 
+        window.location.href = "Page9.html"; 
+    }, 800);
+}
+
+function goToPage10() {
+    document.body.style.transition = "opacity 0.8s";
+    document.body.style.opacity = "0";
+    setTimeout(() => { 
+        window.location.href = "Page10.html"; 
+    }, 800);
+}
+    </script>
+</body>
+</html>

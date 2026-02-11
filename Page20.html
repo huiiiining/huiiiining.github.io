@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialSnap - The Doorstep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@1,400&family=Luckiest+Guy&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; width: 100vw; height: 100vh; font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
+
+        .background-pov {
+            width: 100%; height: 100%; position: absolute;
+            background: url('png/ryanpov.png') center/cover no-repeat;
+            filter: brightness(0.7); z-index: 1;
+        }
+
+        .live-ui { position: relative; z-index: 10; height: 100vh; padding: 20px; pointer-events: none; }
+        .live-tag {
+            display: inline-block; background: #ff3385; color: white; 
+            padding: 5px 15px; border-radius: 5px; font-family: 'Luckiest Guy';
+            animation: pulse 1s infinite;
+        }
+        .viewer-count { margin-left: 10px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 5px; font-size: 14px; }
+
+        .narrative-box {
+            position: fixed; bottom: 3%; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 700px;
+            background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); border-top: 3px solid #f699bf;
+            padding: 15px; border-radius: 30px; text-align: center;
+            z-index: 200; opacity: 0; transition: opacity 0.8s ease;
+        }
+        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 1rem; font-style: italic; font-family: 'Bitter', serif; }
+
+    /* UPDATED CHOICE UI */
+#choiceContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none; 
+    flex-direction: row; /* Horizontal layout */
+    gap: 40px; /* Space between buttons */
+    width: 90%;
+    max-width: 900px;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.choice-btn {
+    flex: 1; /* Makes buttons equal width */
+    padding: 25px 20px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Luckiest Guy';
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+    color: white;
+    background: #ff3385; /* Uniform Pink */
+    box-shadow: 0 0 25px rgba(255, 51, 133, 0.4);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    pointer-events: all;
+}
+
+.choice-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+        .calm-btn { background: #ff3385; box-shadow: 0 0 20px rgba(76, 175, 80, 0.5); }
+        .police-btn { background: #ff3385; box-shadow: 0 0 20px rgba(244, 67, 54, 0.5); }
+        .choice-btn:hover { transform: scale(1.1); }
+
+        .chat-container {
+            position: absolute; bottom: 18%; left: 20px; width: 280px; height: 350px;
+            display: flex; flex-direction: column-reverse; overflow: hidden; z-index: 15;
+            mask-image: linear-gradient(to top, black 60%, transparent 100%);
+        }
+        .comment {
+            font-size: 12px; margin-top: 4px; padding: 6px 10px; background: rgba(0,0,0,0.6);
+            border-radius: 12px; border-left: 3px solid #ff3385; animation: commentFlow 3s linear forwards;
+        }
+        .emoji-track { position: absolute; right: 20px; bottom: 15%; width: 60px; height: 300px; z-index: 20; pointer-events: none;}
+        .emoji { position: absolute; bottom: 0; opacity: 0; animation: floatEmoji 3s ease-in forwards; font-size: 24px; }
+
+        @keyframes commentFlow { 0% { transform: translateY(20px); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-300px); opacity: 0; } }
+        @keyframes floatEmoji { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-300px); opacity: 0; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        #fadeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; opacity: 0; z-index: 2000; pointer-events: none; transition: opacity 1.5s; }
+    </style>
+</head>
+<body onload="initScene()">
+
+<div id="fadeOverlay"></div>
+<div class="background-pov"></div>
+
+<div class="live-ui">
+    <div class="live-tag">LIVE</div>
+    <span class="viewer-count">👤 1,042</span>
+    <div class="chat-container" id="chat"></div>
+    <div class="emoji-track" id="emojis"></div>
+    
+    <div class="narrative-box" id="ryanBox">
+        <p id="ryanText"></p>
+    </div>
+</div>
+
+<div id="choiceContainer">
+    <button class="choice-btn calm-btn" onclick="makeChoice('page21.html')">TRY TO CALM HIM DOWN</button>
+    <button class="choice-btn police-btn" onclick="makeChoice('page22.html')">CALL THE POLICE IMMEDIATELY</button>
+</div>
+<div id="choiceContainer">
+    <button class="choice-btn" onclick="makeChoice('page21.html')">TRY TO CALM HIM DOWN</button>
+    
+    <button class="choice-btn" onclick="makeChoice('page22.html')">CALL THE POLICE IMMEDIATELY</button>
+</div>
+<script>
+    const ryanDialogue = [
+        { text: "LOOK AT THIS HOUSE! I TOLD YOU I'D FIND IT.", audio: "audio/Ryan_7.mp3" },
+        { text: "OLIVIA! I KNOW YOU'RE IN THERE. STOP IGNORING ME!", audio: "audio/Ryan_8.mp3" },
+        { text: "YOU THINK YOU CAN JUST BLOCK ME AND IT'S OVER?", audio: "audio/Ryan_9.mp3" },
+        { text: "I'M COUNTING TO THREE. OPEN THIS DOOR OR I'LL OPEN IT FOR YOU!", audio: "audio/Ryan_10.mp3" },
+        { text: "ONE... TWO... THREE!", audio: "audio/Ryan_11.mp3" }
+    ];
+
+    const chatPool = ["HE'S ACTUALLY THERE!", "OPEN THE DOOR!", "WORLD STAR!", "DO IT RYAN", "SHE'S SCARED", "LMAOOOOO", "Is he breaking in?", "1.5K VIEWERS!!"];
+    const emojiPool = ["🔥", "😱", "😂", "👊", "💯"];
+
+    let step = 0;
+    const audioObj = new Audio();
+    let fallbackTimer;
+
+    function initScene() {
+        setInterval(spawnComment, 600);
+        setInterval(spawnEmoji, 400);
+        playNextLine();
+    }
+
+    function playNextLine() {
+        if (step < ryanDialogue.length) {
+            const ryanBox = document.getElementById('ryanBox');
+            const ryanText = document.getElementById('ryanText');
+            ryanBox.style.opacity = 1;
+            ryanText.innerText = ryanDialogue[step].text;
+            audioObj.src = ryanDialogue[step].audio;
+            clearTimeout(fallbackTimer);
+            audioObj.play()
+                .then(() => {
+                    audioObj.onended = () => {
+                        step++;
+                        setTimeout(playNextLine, 800); // Small pause between lines
+                    };
+                })
+                .catch(e => {
+                    console.warn("Autoplay blocked. Using 4s timer fallback.");
+                    fallbackTimer = setTimeout(() => {
+                        step++;
+                        playNextLine();
+                    }, 4000);
+                });
+        } else {
+            showChoices();
+        }
+    }
+
+    function showChoices() {
+        document.getElementById('ryanBox').style.opacity = 0;
+        document.getElementById('choiceContainer').style.display = 'flex';
+    }
+    function makeChoice(url) {
+        document.getElementById('fadeOverlay').style.opacity = 1;
+        setTimeout(() => { window.location.href = url; }, 1500);
+    }
+
+    function spawnComment() {
+        const chat = document.getElementById('chat');
+        if(!chat) return;
+        const c = document.createElement('div');
+        c.className = 'comment';
+        c.innerHTML = `<strong>User${Math.floor(Math.random()*99)}</strong>: ${chatPool[Math.floor(Math.random()*chatPool.length)]}`;
+        chat.prepend(c);
+        setTimeout(() => c.remove(), 3000);
+    }
+
+    function spawnEmoji() {
+        const track = document.getElementById('emojis');
+        if(!track) return;
+        const e = document.createElement('div');
+        e.className = 'emoji';
+        e.innerText = emojiPool[Math.floor(Math.random()*emojiPool.length)];
+        e.style.left = Math.random() * 40 + "px";
+        track.appendChild(e);
+        setTimeout(() => e.remove(), 3000);
+    }
+</script>
+</body>
+</html>

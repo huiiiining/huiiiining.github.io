@@ -3,60 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lying about age</title>
+    <title>Dangerous Choice</title>
     <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
     <style>
         html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #1a1a1a; font-family: 'Bitter', serif; display: flex; flex-direction: column; align-items: center; }
 
         .app-header { width: 100%; background: #000; padding: 12px 0; text-align: center; border-bottom: 2px solid #ff3385; position: sticky; top: 0; z-index: 10; }
         .app-logo { font-family: 'Luckiest Guy', cursive; color: #ff3385; margin: 0; font-size: 1.5rem; }
-        
-        .feed-container { width: 100%; max-width: 400px; height: 75vh; overflow-y: auto; padding: 15px; box-sizing: border-box; filter: grayscale(0.3); }
-        
-        .post { background: #222; border-radius: 15px; margin-bottom: 15px; padding: 12px; border: 1px solid #333; color: #eee; }
-        .post-img { width: 100%; height: 180px; background: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+        #scrollHint { color: #ff3385; font-size: 0.8rem; margin-top: 10px; animation: bounce 2s infinite; }
+        .feed-container { width: 100%; max-width: 400px; height: 75vh; overflow-y: auto; padding: 15px; box-sizing: border-box; filter: grayscale(0.5) contrast(1.2); scroll-behavior: smooth; }
+        .post { background: #222; border-radius: 15px; margin-bottom: 15px; padding: 12px; border: 1px solid #442222; color: #eee; }
+        .post-img { width: 100%; height: 180px; background: #331a1a; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
         .post-user { font-weight: bold; color: #ff3385; margin: 8px 0 3px 0; font-size: 0.9rem; }
         .post-desc { font-size: 0.85rem; color: #bbb; }
         .warning-box {
             position: fixed;
-            top: 15%; 
-            width: 80%;
+            top: 20%; 
+            width: 85%;
             max-width: 320px;
             background: #d32f2f; 
             color: white;
-            padding: 15px;
-            border-radius: 20px;
+            padding: 25px;
+            border-radius: 25px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 100;
-            animation: shake 0.5s ease-in-out;
+            box-shadow: 0 0 30px rgba(211, 47, 47, 0.6);
+            z-index: 1000;
+            display: none;
+            animation: shake 0.4s ease-in-out infinite alternate;
         }
-        .warning-box h2 { font-family: 'Luckiest Guy', cursive; margin: 0; font-size: 1.1rem; }
-        
-        .consequence-list { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 10px; font-size: 0.75rem; text-align: left; margin-top: 8px; line-height: 1.4; }
-
+        .warning-box h2 { font-family: 'Luckiest Guy', cursive; margin: 0 0 10px 0; font-size: 1.3rem; }  
+        .consequence-list { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 15px; font-size: 0.8rem; text-align: left; margin: 10px 0; line-height: 1.4; border-left: 3px solid #ff8a80; }
         .narrative-box {
-            position: fixed;
-            bottom: 2%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-width: 700px;
-            background: rgba(255, 182, 193, 0.4);  
-            backdrop-filter: blur(8px); 
-            border-top: 3px solid #ff3385;;
-            padding: 10px;
-            border-radius: 30px;
-            text-align: center;
-            z-index: 200;
+            position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 700px; background: rgba(255, 182, 193, 0.4); 
+            backdrop-filter: blur(4px); border-top: 3px solid #ff3385;
+            padding: 10px; border-radius: 30px; text-align: center; z-index: 200;
+            display: none; 
         }
-        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; }
+        .narrative-box p { color: #FFF; margin: 0; font-size: 0.95rem; font-style: italic; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
+        @keyframes shake { from { transform: rotate(-1deg); } to { transform: rotate(1deg); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-5px);} 60% {transform: translateY(-3px);} }
     </style>
 </head>
 <body>
@@ -65,40 +52,50 @@
 
     <div class="app-header">
         <h1 class="app-logo">SocialSnap <span style="font-size: 0.7rem;">(Unrestricted)</span></h1>
+        <div id="scrollHint">Keep scrolling to explore! ↓</div>
     </div>
 
-    <div class="feed-container">
+    <div class="feed-container" id="feed">
         <div class="post"><div class="post-img">🍑🍆</div><p class="post-user">@Stranger44</p><p class="post-desc">Click my bio for "exclusive" prizes! 🤫</p></div>
         <div class="post"><div class="post-img">💸</div><p class="post-user">@FastCash_Bot</p><p class="post-desc">Send me $5 to get $500 back instantly!</p></div>
         <div class="post"><div class="post-img">📍👀</div><p class="post-user">@MysteryUser</p><p class="post-desc">Anyone in this neighborhood want to meet up?</p></div>
     </div>
 
-    <div class="warning-box">
+    <div id="warningBox" class="warning-box">
         <h2>Dangerous Choice! ⚠️</h2>
         <div class="consequence-list">
-            • <b>Predators:</b> Olivia is now exposed to inappropriate content.<br>
-            • <b>Scams:</b> The feed is full of "prizes" that steal data.<br>
-            • <b>Safety:</b> Her location is no longer protected by law.
+            • <b>Predators:</b> Exposed to inappropriate content.<br>
+            • <b>Scams:</b> Feed is full of data-stealing prizes.<br>
+            • <b>Safety:</b> Location is no longer protected.
         </div>
-        <a href="Page5.html" style="color:#ffcdd2; font-size:0.75rem; display:block; margin-top:10px; font-weight:bold; text-transform:uppercase;">Check New Notifications</a>
+        <a href="Page5.html" style="color:#ffcdd2; font-size:0.85rem; display:inline-block; margin-top:15px; font-weight:bold; text-transform:uppercase; text-decoration: none; border-bottom: 2px solid #ffcdd2;">Check Notifications</a>
     </div>
 
-    <div class="narrative-box">
+    <div id="narrativeBox" class="narrative-box">
         <p id="narrativeText">"I lied and got in... but the posts here are kind of scary. I'm seeing things I wasn't supposed to see."</p>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const audio = document.getElementById('failAudio');
-            const playPromise = audio.play();
+        const feed = document.getElementById('feed');
+        const warningBox = document.getElementById('warningBox');
+        const narrativeBox = document.getElementById('narrativeBox');
+        const audio = document.getElementById('failAudio');
+        const hint = document.getElementById('scrollHint');
+        let triggered = false;
 
-            if (playPromise !== undefined) {
-                playPromise.then(_ => { console.log("Audio playing."); })
-                .catch(error => {
-                    document.addEventListener('click', () => { audio.play(); }, { once: true });
-                });
+        feed.addEventListener('scroll', () => {
+            if (!triggered && feed.scrollHeight - feed.scrollTop <= feed.clientHeight + 10) {
+                showWarning();
             }
         });
+
+        function showWarning() {
+            triggered = true;
+            warningBox.style.display = 'block';
+            narrativeBox.style.display = 'block'; 
+            hint.style.display = 'none';
+            audio.play().catch(e => console.log("Audio play blocked. Click to hear."));
+        }
     </script>
 
 </body>

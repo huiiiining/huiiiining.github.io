@@ -11,8 +11,6 @@
         .desk-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: fill; filter: brightness(0.6); transition: filter 0.8s; }
         
         #computerClickZone { position: absolute; top: 29%; left: 31%; width: 28%; height: 25%; cursor: pointer; z-index: 15; display: none; }
-
-        /* Notification Styling */
         #notifArea { position: fixed; top: 20px; right: 20px; width: 300px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
         
         .notif {
@@ -25,7 +23,7 @@
         .notif-app { font-size: 0.7rem; color: #ff3385; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
         .notif-text { font-size: 0.85rem; color: #333; font-weight: 600; }
 
-        /* Narrative Box */
+
         .narrative-box {
             position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%);
             width: 85%; max-width: 700px; background: rgba(255, 182, 193, 0.2); 
@@ -33,7 +31,7 @@
             padding: 10px; border-radius: 30px; text-align: center; z-index: 5000; 
             display: none; opacity: 0; transition: opacity 0.8s ease;
         }
-        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); }
+        .narrative-box p { color: #fff; font-family: 'Bitter', serif; font-size: 1.1rem; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
         #typingOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100; background: #f3f3f3; display: none; flex-direction: column; align-items: center; }
         .word-header { width: 100%; height: 40px; background: #2b579a; color: white; display: flex; align-items: center; padding-left: 20px; font-family: Arial; font-weight: bold; font-size: 0.9rem; }
@@ -69,7 +67,7 @@
         <button class="btn-action" onclick="showHomeworkPrompt()">Next</button>
     </div>
 
-    <div id="timeSkip"><p style="font-size: 2.5rem; font-style: italic;">Monday Morning...</p></div>
+    <div id="timeSkip"><p style="font-family: 'Luckiest Guy'; font-size: 2.5rem; font-style: italic;">Monday Morning...</p></div>
 
     <script>
         const notifMessages = [
@@ -125,17 +123,11 @@
             const n = document.createElement('div');
             n.className = 'notif';
             n.innerHTML = `<div class="notif-app">SocialSnap</div><div class="notif-text">${msg}</div>`;
-            
-            // Sync: Audio triggers exactly when element is added to DOM
             const sfx = new Audio('audio/sfx_Notification.mp3');
             sfx.play();
             
-            area.prepend(n); // Newest on top
-            
-            // Trigger smooth slide-in
+            area.prepend(n); 
             setTimeout(() => n.classList.add('show'), 10);
-            
-            // Remove after 4 seconds
             setTimeout(() => {
                 n.style.opacity = '0';
                 setTimeout(() => n.remove(), 500);
@@ -154,18 +146,16 @@
             const typer = setInterval(() => {
                 content.innerHTML += essayText.charAt(i);
                 i++;
-
-                // HIGH FREQUENCY BURSTS
                 if (i === 15) spawnNotif(notifMessages[0]);
                 if (i === 30) spawnNotif(notifMessages[1]);
                 if (i === 45) spawnNotif(notifMessages[2]);
                 if (i === 80) {
                     spawnNotif(notifMessages[3]);
-                    setTimeout(() => spawnNotif(notifMessages[4]), 400); // Rapid fire
+                    setTimeout(() => spawnNotif(notifMessages[4]), 400); 
                 }
                 if (i === 120) {
                     spawnNotif(notifMessages[5]);
-                    setTimeout(() => spawnNotif(notifMessages[6]), 300); // Rapid fire
+                    setTimeout(() => spawnNotif(notifMessages[6]), 300); 
                 }
 
                 if (i === essayText.length) {

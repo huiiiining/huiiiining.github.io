@@ -41,12 +41,8 @@
             border-radius: 50%; margin: 0 auto 15px;
             display: flex; align-items: center; justify-content: center; font-size: 3rem;
         }
-
-        /* BUTTONS */
         .btn-accept { background: #ff79b0; color: white; border: none; padding: 15px 35px; border-radius: 30px; font-weight: bold; cursor: pointer; }
         .btn-deny { background: #eee; color: #999; border: none; padding: 15px 35px; border-radius: 30px; cursor: pointer; transition: transform 0.1s ease-out; }
-
-        /* EDUCATION BOX (CENTERED MODAL) */
         .edu-box {
             position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -54,11 +50,9 @@
             background: white; padding: 30px;
             border-radius: 25px; border: 4px solid #ff79b0;
             text-align: center; z-index: 2000;
-            display: none; /* Hidden by default */
+            display: none; 
             box-shadow: 0 0 0 100vw rgba(0,0,0,0.6), 0 10px 30px rgba(0,0,0,0.3);
         }
-
-        /* NARRATIVE BOX (LOWER THIRD) */
         .narrative-box {
             position: fixed;
             bottom: 2%;
@@ -74,7 +68,7 @@
             text-align: center;
             z-index: 200;
         }
-         .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; }
+        .narrative-box p { color: #fff; font-family: 'Bitter', serif; font-size: 1.1rem; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
     </style>
 </head>
@@ -129,31 +123,21 @@
             denyBtn.style.transform = `translate(${Math.random()*160-80}px, ${Math.random()*100-50}px)`;
         });
         function handleAccept() {
-    // 1. Stop background audio immediately
     a9.pause(); 
     a11.pause();
-    
-    // 2. Play the final confirmation (Olivia_12: "Accepted. Let's see...")
     if(a12) {
         a12.play();
-        
-        // 3. When she finishes speaking, show the warning box
         a12.onended = function() {
             showWarning();
         };
     } else {
-        showWarning(); // Fallback if audio fails
+        showWarning(); 
     }
-
-    // Update the subtitle text one last time while she speaks
     narrative.innerText = "Accepted. Let's see what happens next...";
 }
 
 function showWarning() {
-    // Reveal the centered pop-up
     document.getElementById('eduBox').style.display = 'block';
-    
-    // Optional: Hide the narrative box entirely so it's not distracting
     document.querySelector('.narrative-box').style.display = 'none';
 }
 

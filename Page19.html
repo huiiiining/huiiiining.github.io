@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@1,400&family=Luckiest+Guy&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body, html { margin: 0; padding: 0; background: #000; width: 100vw; height: 100vh; font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
+        
         #startScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 5000;
@@ -59,21 +60,34 @@
             padding: 15px; border-radius: 30px; text-align: center;
             z-index: 200; opacity: 0; transition: opacity 0.8s ease;
         }
-        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 1rem; font-style: italic; font-family: 'Bitter', serif; }
+        .narrative-box p { color: #fff; font-family: 'Bitter', serif; font-size: 1.1rem; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
         .chat-container {
-            position: absolute; bottom: 18%; left: 20px; width: 280px; height: 350px;
+            position: absolute; bottom: 18%; left: 20px; width: 320px; height: 420px;
             display: flex; flex-direction: column-reverse; overflow: hidden; z-index: 15;
-            mask-image: linear-gradient(to top, black 60%, transparent 100%);
+            mask-image: linear-gradient(to top, black 80%, transparent 100%);
+            gap: 0px; 
         }
         .comment {
-            font-size: 12px; margin-top: 4px; padding: 6px 10px; background: rgba(0,0,0,0.6);
-            border-radius: 12px; border-left: 3px solid #ff3385; animation: commentFlow 3s linear forwards;
-            line-height: 1.2; width: fit-content; max-width: 95%;
+            font-size: 10.5px; 
+            padding: 3px 8px; 
+            background: rgba(0,0,0,0.4);
+            border-left: 3px solid #ff3385; 
+            animation: commentFlow 3.5s linear forwards;
+            line-height: 1.0; 
+            width: fit-content; 
+            max-width: 95%;
+            margin-bottom: 1px;
+            white-space: nowrap;
         }
         .emoji-track { position: absolute; right: 20px; bottom: 15%; width: 60px; height: 300px; z-index: 20; pointer-events: none;}
         .emoji { position: absolute; bottom: 0; opacity: 0; animation: floatEmoji 3s ease-in forwards; font-size: 24px; }
 
-        @keyframes commentFlow { 0% { transform: translateY(20px); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-300px); opacity: 0; } }
+        @keyframes commentFlow { 
+            0% { transform: translateY(5px); opacity: 0; filter: blur(2px); } 
+            8% { opacity: 0.9; filter: blur(0px); } 
+            100% { transform: translateY(-400px); opacity: 0; } 
+        }
         @keyframes floatEmoji { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; transform: translateY(-20px) scale(1.2); } 100% { transform: translateY(-300px) scale(1); opacity: 0; } }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
@@ -111,8 +125,19 @@
         { text: "I am scared.. is he really going to dox me?", audio: "audio/Olivia_28.mp3" }
     ];
 
-    const chatPool = ["DO IT RYAN!", "Is this Oak Hills area??", "SICK DEEPFAKE BRO", "Ring the bell!", "Dox her!", "LMAO REVEAL IT", "She's home lol", "Is that a Pink Bean cup??", "1K VIEWERS LETS GOOO", "I know that street...", "SPILL THE TEA ☕", "Caught in 4K 📸"];
-    const emojiPool = ["😡", "😱", "🔥", "👀", "💔", "💯"];
+    const chatPool = [
+        "DO IT RYAN!", "Is this Oak Hills area??", "SICK DEEPFAKE BRO", "Ring the bell!", "Dox her!", 
+        "LMAO REVEAL IT",  "1K VIEWERS LETS GOOO", "Why isn't anyone reporting him?",
+        "This is insane.", "SPILL THE TEA ☕", "Caught in 4K 📸", "Expose her already", 
+        "Wait I think I live near here", "Is that the park with the arch??", "Drop the address!!", 
+        "No way this is real lol", "The drama is insane today", "Check her latest story guys", 
+        "SHES WATCHING RIGHT NOW", "Ryan is savage for this", "Who is this girl??", 
+        "Address leak at 1k viewers??", "Hype train! 🚂", "Fake lol", "Is this a skit?", 
+        "Don't stop now Ryan", "This is going viral tomorrow for sure", "SHE'S TRAPPED",
+        "Ryan is the GOAT for this", "Anyone recognize that bus stop??", "LMAOOOOO", "👀👀👀"
+    ];
+    
+    const emojiPool = ["😡", "😱", "🔥", "👀", "💔", "💯", "😂", "🤯", "💀", "💅"];
 
     const audioObj = new Audio();
     const sfxNotif = new Audio("audio/sfx_Notification.mp3"); 
@@ -125,8 +150,14 @@
     function startExperience() {
         document.getElementById('startScreen').style.display = 'none';
         playSequence();
-        setInterval(spawnComment, 800);
-        setInterval(spawnEmoji, 600);
+        spawnLogic();
+        setInterval(spawnEmoji, 300); 
+    }
+
+    function spawnLogic() {
+        spawnComment();
+        let randomTime = Math.random() * 300 + 200; 
+        setTimeout(spawnLogic, randomTime);
     }
 
     function playSequence() {
@@ -147,9 +178,14 @@
         const chat = document.getElementById('chat');
         const c = document.createElement('div');
         c.className = 'comment';
-        c.innerHTML = `<strong>User${Math.floor(Math.random()*99)}</strong>: ${chatPool[Math.floor(Math.random()*chatPool.length)]}`;
+        
+        const users = ["X_Ghost", "Shadow", "Anon99", "Breezy", "Skater_Boy", "User_", "VibeCheck", "RealOne", "TrollFace", "DoxMaster"];
+        const randomUser = users[Math.floor(Math.random()*users.length)] + Math.floor(Math.random()*99);
+        
+        c.innerHTML = `<strong>${randomUser}</strong>: ${chatPool[Math.floor(Math.random()*chatPool.length)]}`;
         chat.prepend(c);
-        setTimeout(() => c.remove(), 3000);
+        
+        setTimeout(() => c.remove(), 3500);
     }
 
     function spawnEmoji() {
@@ -157,7 +193,7 @@
         const e = document.createElement('div');
         e.className = 'emoji';
         e.innerText = emojiPool[Math.floor(Math.random()*emojiPool.length)];
-        e.style.left = Math.random() * 40 + "px";
+        e.style.left = Math.random() * 50 + "px";
         track.appendChild(e);
         setTimeout(() => e.remove(), 3000);
     }
@@ -175,7 +211,7 @@
             document.getElementById('vCount').innerText = viewers;
         }
         checkFinalTransition();
-    }, 1200);
+    }, 800); 
 </script>
 </body>
 </html>

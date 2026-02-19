@@ -2,20 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SocialSnap - Sending...</title>
+    <title>Sending...</title>
     <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
-    <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #fdfdfd; font-family: 'Bitter', serif; overflow: hidden; }
-        
-        .chat-container { display: flex; flex-direction: column; width: 100vw; height: 100vh; transition: filter 0.5s ease; }
-        .chat-header { background: linear-gradient(135deg, #ff79b0 0%, #ffb6c1 100%); padding: 50px 20px 15px; display: flex; align-items: center; color: white; }
-        .mini-profile { width: 40px; height: 40px; background: rgba(255,255,255,0.3); border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; }
-        
-        .message-area { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: #fff; overflow-y: hidden; }
+    <style> 
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #fdfdfd; font-family: 'Bitter', serif; overflow: hidden; } 
+        .chat-container { display: flex; flex-direction: column; width: 100vw; height: 100vh; transition: filter 0.5s ease; } 
+        .chat-header { background: linear-gradient(135deg, #ff79b0 0%, #ffb6c1 100%); padding: 50px 20px 15px; display: flex; align-items: center; color: white; } 
+        .mini-profile { width: 40px; height: 40px; background: rgba(255,255,255,0.3); border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; } 
+        .message-area { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: #fff; overflow-y: hidden; } 
 
-        .bubble { max-width: 75%; padding: 12px 18px; border-radius: 25px; font-size: 1rem; line-height: 1.4; }
-        .ryan-msg { background: #f1f1f1; color: #222; align-self: flex-start; border-bottom-left-radius: 5px; }
-        .olivia-msg { background: #ff79b0; color: white; align-self: flex-end; border-bottom-right-radius: 5px; }
+        .bubble { max-width: 75%; padding: 12px 18px; border-radius: 25px; font-size: 1rem; line-height: 1.4; } 
+        .ryan-msg { background: #f1f1f1; color: #222; align-self: flex-start; border-bottom-left-radius: 5px; } 
+        .olivia-msg { background: #ff79b0; color: white; align-self: flex-end; border-bottom-right-radius: 5px; } 
 
         .photo-sent { 
             align-self: flex-end; 
@@ -25,37 +23,34 @@
             background-size: cover; 
             border: 4px solid #ff79b0; 
             border-radius: 15px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            animation: fadeIn 0.4s ease-out;
-        }
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            animation: fadeIn 0.4s ease-out; 
+        } 
 
-        #glitchOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; display: none;
-            justify-content: center; align-items: center;
-        }
-
-        /* Using your updated styles */
-        .narrative-box {
-            position: fixed; bottom: 2%; left: 50%;
-            transform: translateX(-50%); width: 85%; max-width: 700px;
+        #glitchOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; z-index: 10000; display: none; 
+            justify-content: center; align-items: center; 
+        } 
+        .narrative-box { 
+            position: fixed; bottom: 2%; left: 50%; 
+            transform: translateX(-50%); width: 85%; max-width: 700px; 
             background: rgba(255, 182, 193, 0.2); backdrop-filter: blur(8px); 
-            border-top: 3px solid #f699bf; padding: 10px; border-radius: 30px;
-            text-align: center; z-index: 200; display: none; opacity: 0; transition: opacity 0.8s ease;
-        }
-        .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; }
+            border-top: 3px solid #f699bf; padding: 10px; border-radius: 30px; 
+            text-align: center; z-index: 200; display: none; opacity: 0; transition: opacity 0.8s ease; 
+        } 
+        .narrative-box p { color: #fff; font-family: 'Bitter', serif; font-size: 1.1rem; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.8); } 
 
-        .choice-footer { position: fixed; bottom: 140px; width: 100%; display: flex; justify-content: center; padding: 10px; z-index: 200; }
-        .btn-send { width: 100%; max-width: 400px; padding: 20px; border-radius: 40px; border: none; background: #ff79b0; color: white; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Bitter'; box-shadow: 0 4px 15px rgba(255, 121, 176, 0.4); }
+        .choice-footer { position: fixed; bottom: 140px; width: 100%; display: flex; justify-content: center; padding: 10px; z-index: 200; } 
+        .btn-send { width: 100%; max-width: 400px; padding: 20px; border-radius: 40px; border: none; background: #ff79b0; color: white; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Bitter'; box-shadow: 0 4px 15px rgba(255, 121, 176, 0.4); } 
 
-        .system-msg { align-self: center; background: rgba(0, 0, 0, 0.05); color: #666; font-size: 0.85rem; padding: 8px 15px; border-radius: 15px; margin: 10px 0; font-style: italic; }
+        .system-msg { align-self: center; background: rgba(0, 0, 0, 0.05); color: #666; font-size: 0.85rem; padding: 8px 15px; border-radius: 15px; margin: 10px 0; font-style: italic; } 
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
     </style>
 </head>
 <body>
 
-    <audio id="ping" src="audio/sfx_notification.mp3"></audio>
     <audio id="whoosh" src="audio/sfx_send.mp3"></audio>
     <audio id="audio15" src="audio/Olivia_15.mp3"></audio> 
     <audio id="audio16" src="audio/Olivia_16.mp3"></audio> 
@@ -108,41 +103,32 @@
 
             footer.style.display = 'none';
             narrative.style.opacity = '0'; 
-            
             setTimeout(() => {
                 if(whoosh) whoosh.play();
                 const photo = document.createElement('div');
                 photo.className = 'photo-sent';
                 msgArea.appendChild(photo);
-
                 setTimeout(() => {
-                    // FIX 1: Play the audio for the second thought
-                    if(a16) a16.play();
-                    
-                    narrativeText.innerText = "Wait... why did he just go offline?";
-                    narrative.style.opacity = '1'; 
+                    if(sfxGlitch) sfxGlitch.play(); 
 
                     const sysMsg = document.createElement('div');
                     sysMsg.className = 'system-msg';
-                    sysMsg.innerText = "@Ryan_Real has gone offline.";
+                    sysMsg.innerHTML = "<strong>@Ryan_Real</strong> has gone offline.";
                     msgArea.appendChild(sysMsg);
-
-                    // Transition to glitch after the panic sets in
                     setTimeout(() => {
-                        // FIX 2: Ensure Glitch SFX plays
-                        if(sfxGlitch) {
-                            sfxGlitch.volume = 1.0;
-                            sfxGlitch.play();
-                        }
-                        
-                        chatMain.style.filter = "invert(1) contrast(2) blur(5px)";
-                        glitchOverlay.style.display = 'flex';
-                        
+                        if(a16) a16.play();
+                        narrativeText.innerText = "Wait... why did he just go offline?";
+                        narrative.style.opacity = '1'; 
                         setTimeout(() => {
-                            window.location.href = "Page11.html";
-                        }, 1500); 
-                    }, 4000); 
-                }, 2000);
+                            chatMain.style.filter = "invert(1) contrast(2) blur(5px)";
+                            glitchOverlay.style.display = 'flex';
+                            
+                            setTimeout(() => {
+                                window.location.href = "Page11.html";
+                            }, 1500); 
+                        }, 4000); 
+                    }, 3000);
+                }, 1500);
             }, 500);
         }
     </script>

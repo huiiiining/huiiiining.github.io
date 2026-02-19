@@ -1,185 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>The Discovery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
-    <style>
-        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; display: flex; justify-content: center; align-items: center; }
-        .game-container { position: absolute; width: 100vw; height: 100vh; }
-        .desk-img { width: 100%; height: 100%; object-fit: fill; display: block; }
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <title>The Discovery</title> 
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet"> 
+    <style> 
+        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; display: flex; justify-content: center; align-items: center; } 
+        .game-container { position: absolute; width: 100vw; height: 100vh; } 
+        .desk-img { width: 100%; height: 100%; object-fit: cover; display: block; } 
 
         .modal-overlay { 
             display: none; position: fixed; 
             top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); 
             z-index: 1000; justify-content: center; align-items: center; 
-        }
+        } 
 
-        .phone-mockup {
+        .phone-mockup { 
             background: #fff; width: 210px; height: 440px; 
-            border: 12px solid #1a1a1a; border-radius: 40px;
-            position: relative; display: flex; flex-direction: column;
-            padding: 15px; box-shadow: 0 0 50px rgba(255, 51, 133, 0.3);
-            animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-            box-sizing: border-box;
-        }
+            border: 12px solid #1a1a1a; border-radius: 40px; 
+            position: relative; display: flex; flex-direction: column; 
+            padding: 15px; box-shadow: 0 0 50px rgba(255, 51, 133, 0.3); 
+            animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1); 
+            box-sizing: border-box; 
+        } 
 
-        @keyframes slideUp { from { transform: translateY(100vh); } to { transform: translateY(0); } }
+        @keyframes slideUp { from { transform: translateY(100vh); } to { transform: translateY(0); } } 
 
-        .phone-title { font-family: 'Luckiest Guy', cursive; color: #ff3385; text-align: center; margin-top: 15px; font-size: 1.2rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .msg-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 10px 5px; scrollbar-width: none; }
-        .bubble { background: #fdf2f7; padding: 10px; border-radius: 15px 15px 15px 5px; color: #d81b60; font-weight: 700; margin: 8px 0; font-size: 0.85rem; border: 1px solid #f8bbd0; align-self: flex-start; max-width: 90%; }
+        .phone-title { font-family: 'Luckiest Guy', cursive; color: #ff3385; text-align: center; margin-top: 15px; font-size: 1.2rem; border-bottom: 1px solid #eee; padding-bottom: 5px; } 
+        .msg-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 10px 5px; scrollbar-width: none; } 
+        .bubble { background: #fdf2f7; padding: 10px; border-radius: 15px 15px 15px 5px; color: #d81b60; font-weight: 700; margin: 8px 0; font-size: 0.85rem; border: 1px solid #f8bbd0; align-self: flex-start; max-width: 90%; } 
         
         .video-box { 
-            width: 140px; height: 140px; background: #222; border-radius: 12px; 
+            width: 140px; height: 120px; background: #222; border-radius: 12px; 
             border: 2px solid #ff3385; margin-top: 5px; display: flex; 
-            flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer;
-        }
+            flex-direction: column; align-items: center; justify-content: center; 
+            cursor: pointer; 
+        } 
 
-        .narrative-box {
-            position: fixed;
-            bottom: 2%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-width: 700px;
-            background: rgba(255, 182, 193, 0.2); 
-            backdrop-filter: blur(8px); 
-            border-top: 3px solid #f699bf;
-            padding: 10px;
-            border-radius: 30px;
-            text-align: center;
-            z-index: 5000; 
-            display: none;
-            opacity: 0;
-            transition: opacity 0.8s ease;
+        .narrative-box { 
+            position: fixed; bottom: 2%; left: 50%; transform: translateX(-50%); 
+            width: 85%; max-width: 700px; background: rgba(255, 182, 193, 0.2); 
+            backdrop-filter: blur(8px); border-top: 3px solid #f699bf; 
+            padding: 10px; border-radius: 30px; text-align: center; 
+            z-index: 5000; display: none; opacity: 0; 
+            transition: opacity 0.8s ease; 
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-        }
-
-        .narrative-box p { 
-            color: #ffcdd2; 
-            margin: 0; 
-            font-size: 0.95rem; 
-            font-style: italic; 
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-        }
+        } 
+        .narrative-box p { color: #fff; font-family: 'Bitter', serif; font-size: 1.1rem; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.8); } 
 
         #deepfakeModal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.98); z-index: 10000; display: none; 
             flex-direction: column; justify-content: center; align-items: center; 
-            color: white; padding: 40px; text-align: center; 
+            color: white; padding: 20px; text-align: center; 
+        } 
+
+        .df-content { 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; max-width: 700px; width: 100%;
         }
 
-        .choice-btn { margin-top: 20px; padding: 15px 30px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-family: 'Bitter', serif; }
-    </style>
-</head>
-<body>
+        .button-row {
+            display: flex; flex-direction: row; gap: 20px; 
+            justify-content: center; width: 100%; margin-top: 25px;
+        }
 
-    <audio id="vibrateSfx" src="audio/sfx_Vibrate.mp3" loop></audio>
-    <audio id="notificationPing" src="audio/sfx_Notification.mp3"></audio>
-    <audio id="olivia17" src="audio/Olivia_17.mp3"></audio>
-    <audio id="olivia18" src="audio/Olivia_18.mp3"></audio>
+        .choice-btn { 
+            padding: 15px 40px; border: none; border-radius: 50px; 
+            font-weight: bold; cursor: pointer; font-family: 'Luckiest Guy', cursive; 
+            text-transform: uppercase; transition: 0.2s; font-size: 1rem;
+            background: #ff3385; color: white; /* Both buttons now pink & white */
+            box-shadow: 0 4px 15px rgba(255, 51, 133, 0.3);
+        } 
+        .choice-btn:hover { transform: scale(1.05); background: #ff5c9d; }
+    </style> 
+</head> 
+<body> 
 
-    <div class="game-container">
-        <img src="png/desk.png" usemap="#image-map" class="desk-img">
-        <map name="image-map">
-            <area alt="Phone" href="javascript:void(0)" onclick="pickupPhone()" coords="607,456,662,441,712,536,652,554,604,467" shape="poly">
-        </map>
-    </div>
+    <audio id="vibrateSfx" src="audio/sfx_Vibrate.mp3" loop></audio> 
+    <audio id="notificationPing" src="audio/sfx_Notification.mp3"></audio> 
+    <audio id="olivia17" src="audio/Olivia_17.mp3"></audio> 
+    <audio id="olivia18" src="audio/Olivia_18.mp3"></audio> 
 
-    <div id="phoneOverlay" class="modal-overlay">
-        <div class="phone-mockup">
-            <div class="phone-title">Bestie 🌸</div>
-            <div class="msg-area" id="msgArea"></div>
+    <div class="game-container"> 
+        <img src="png/desk.png" usemap="#image-map" class="desk-img"> 
+        <map name="image-map"> 
+            <area alt="Phone" href="javascript:void(0)" onclick="pickupPhone()" coords="607,456,662,441,712,536,652,554,604,467" shape="poly"> 
+        </map> 
+    </div> 
+
+    <div id="phoneOverlay" class="modal-overlay"> 
+        <div class="phone-mockup"> 
+            <div class="phone-title">Bestie 🌸</div> 
+            <div id="msgArea" class="msg-area"></div> 
+        </div> 
+    </div> 
+
+    <div id="narrativeBox" class="narrative-box"> 
+        <p id="narrativeText">"Someone's messaging me... let me check my phone."</p> 
+    </div> 
+
+    <div id="deepfakeModal"> 
+        <div class="df-content">
+            <h1 style="font-family: 'Luckiest Guy'; color: #ff3385; font-size: 3rem; margin: 0;">⚠️ DEEPFAKE DETECTED</h1> 
+            <p style="font-family: 'Bitter'; font-size: 1.3rem; line-height: 1.5; margin-top: 15px;">Ryan used <b>AI</b> to steal your face. It looks like you, but it’s a fake video sent to the whole school.</p> 
+            
+            <div class="button-row"> 
+                <button class="choice-btn" onclick="window.location.href='Page12.html'">Stay Silent</button> 
+                <button class="choice-btn" onclick="window.location.href='Page13.html'">Report Video</button> 
+            </div> 
         </div>
-    </div>
+    </div> 
 
-    <div id="narrativeBox" class="narrative-box">
-        <p id="narrativeText">"Someone's messaging me... let me check my phone."</p>
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/image-map-resizer/1.0.10/js/imageMapResizer.min.js"></script> 
+    <script> 
+        let chatStarted = false; 
+        const narrative = document.getElementById('narrativeBox'); 
+        const narrativeText = document.getElementById('narrativeText'); 
+        const olivia17 = document.getElementById('olivia17'); 
+        const olivia18 = document.getElementById('olivia18'); 
 
-    <div id="deepfakeModal">
-        <h1 style="font-family: 'Luckiest Guy'; color: #ff3385;">⚠️ DEEPFAKE DETECTED</h1>
-        <p style="max-width: 600px;">Ryan used <b>AI</b> to steal your face. It looks like you, but it’s a fake.</p>
-        <div style="display: flex; gap: 20px;">
-            <button class="choice-btn" style="background: #ff3385; color: white;" onclick="window.location.href='Page12.html'">Stay Silent</button>
-            <button class="choice-btn" style="background: #ff3385; color: white;" onclick="window.location.href='Page13.html'">Report Video</button>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/image-map-resizer/1.0.10/js/imageMapResizer.min.js"></script>
-    <script>
-        let chatStarted = false;
-        const narrative = document.getElementById('narrativeBox');
-        const narrativeText = document.getElementById('narrativeText');
-        const olivia17 = document.getElementById('olivia17');
-        const olivia18 = document.getElementById('olivia18');
-
-        window.onload = function() {
+        window.onload = function() { 
             imageMapResize(); 
-            setTimeout(() => {
-                if(!chatStarted) {
-                    document.getElementById('vibrateSfx').play();
+            setTimeout(() => { 
+                if(!chatStarted) { 
+                    document.getElementById('vibrateSfx').play(); 
                     olivia17.play(); 
-                    window.pingLoop = setInterval(() => { document.getElementById('notificationPing').cloneNode(true).play(); }, 2000);
-                }
-            }, 1000);
-        };
+                    window.pingLoop = setInterval(() => { 
+                        document.getElementById('notificationPing').cloneNode(true).play(); 
+                    }, 2000); 
+                } 
+            }, 1000); 
+        }; 
 
-        olivia17.onplay = function() {
-            narrative.style.display = 'block';
-            setTimeout(() => { narrative.style.opacity = '1'; }, 50);
-        };
+        olivia17.onplay = function() { 
+            narrative.style.display = 'block'; 
+            setTimeout(() => { narrative.style.opacity = '1'; }, 50); 
+        }; 
 
-        olivia18.onplay = function() {
-            narrativeText.innerText = "Wait... that's my face, but I never made that video! I feel sick.";
-            narrative.style.display = 'block';
-            setTimeout(() => { narrative.style.opacity = '1'; }, 50);
-        };
+        olivia18.onplay = function() { 
+            narrativeText.innerText = "Wait... that's my face, but I never made that video! I feel sick."; 
+            narrative.style.display = 'block'; 
+            setTimeout(() => { narrative.style.opacity = '1'; }, 50); 
+        }; 
 
-        function pickupPhone() {
-            if (chatStarted) return;
-            chatStarted = true;
-            document.getElementById('vibrateSfx').pause();
-            clearInterval(window.pingLoop);
-            narrative.style.opacity = '0';
-            setTimeout(() => { narrative.style.display = 'none'; }, 800);
+        function pickupPhone() { 
+            if (chatStarted) return; 
+            chatStarted = true; 
+            document.getElementById('vibrateSfx').pause(); 
+            clearInterval(window.pingLoop); 
+            
+            narrative.style.opacity = '0'; 
+            setTimeout(() => { narrative.style.display = 'none'; }, 800); 
 
-            document.getElementById('phoneOverlay').style.display = 'flex';
-            runBestieChat();
-        }
+            document.getElementById('phoneOverlay').style.display = 'flex'; 
+            runBestieChat(); 
+        } 
 
-        function runBestieChat() {
-            const area = document.getElementById('msgArea');
-            setTimeout(() => {
-                addMsg(area, "Olivia!!! are you there??");
-                setTimeout(() => {
-                    addMsg(area, "I just saw this in the group chat... please tell me this isn't you 😭");
-                    const vid = document.createElement('div');
-                    vid.className = 'video-box';
-                    vid.innerHTML = '<div style="font-size:2.5rem; color:#ff3385;">▶️</div><div style="color:#888; font-size:0.55rem;">video_leaked.mp4</div>';
-                    vid.onclick = triggerDiscovery;
-                    area.appendChild(vid);
-                    area.scrollTop = area.scrollHeight;
-                }, 1500);
-            }, 500);
-        }
+        function runBestieChat() { 
+            const area = document.getElementById('msgArea'); 
+            
+            addMsg(area, "Olivia!!! are you there??"); 
+            addMsg(area, "I just saw this in the group chat... please tell me this isn't you 😭"); 
+            
+            const vid = document.createElement('div'); 
+            vid.className = 'video-box'; 
+            vid.innerHTML = '<div style="font-size:2.5rem; color:#ff3385;">▶️</div><div style="color:#888; font-size:0.55rem; font-family: Bitter;">video_leaked.mp4</div>'; 
+            vid.onclick = triggerDiscovery; 
+            area.appendChild(vid); 
+            
+            area.scrollTop = area.scrollHeight; 
+        } 
 
-        function triggerDiscovery() {
+        function triggerDiscovery() { 
             olivia18.play(); 
-            setTimeout(() => { document.getElementById('deepfakeModal').style.display = 'flex'; }, 3500);
-        }
+            setTimeout(() => { 
+                document.getElementById('deepfakeModal').style.display = 'flex'; 
+            }, 3500); 
+        } 
 
-        function addMsg(area, text) {
-            const div = document.createElement('div');
-            div.className = 'bubble';
-            div.innerText = text;
-            area.appendChild(div);
-            area.scrollTop = area.scrollHeight;
-        }
-    </script>
-</body>
+        function addMsg(area, text) { 
+            const div = document.createElement('div'); 
+            div.className = 'bubble'; 
+            div.innerText = text; 
+            area.appendChild(div); 
+        } 
+    </script> 
+</body> 
 </html>

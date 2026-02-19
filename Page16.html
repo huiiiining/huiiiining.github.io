@@ -12,31 +12,35 @@
             height: 100vh; padding: 20px; text-align: center; 
         }
         #warningBox { 
-            width: 90%; max-width: 600px; background: #222; 
+            width: 85%; max-width: 450px; background: #222; 
             border: 4px solid #ff1744; border-radius: 25px; 
-            padding: 40px; box-shadow: 0 0 30px rgba(255, 23, 68, 0.4);
+            padding: 25px; box-shadow: 0 0 30px rgba(255, 23, 68, 0.4);
             animation: shake 0.5s ease-in-out infinite alternate;
         }
 
-        h1 { font-family: 'Luckiest Guy'; color: #ff1744; font-size: 2.5rem; margin-bottom: 10px; }
-        h2 { color: #ff8a80; font-size: 1.2rem; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
+        h1 { font-family: 'Luckiest Guy'; color: #ff1744; font-size: 2rem; margin-bottom: 5px; }
+        h2 { color: #ff8a80; font-size: 1rem; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
         
-        .info-text { line-height: 1.6; color: #eee; margin: 20px 0; font-size: 1.05rem; }
+        .info-text { line-height: 1.5; color: #eee; margin: 15px 0; font-size: 0.95rem; }
         
         .consequence-list {
-            text-align: left; background: #333; padding: 20px; border-radius: 15px; 
-            color: #ff8a80; margin: 20px 0; font-size: 0.95rem;
+            text-align: left; background: #333; padding: 15px; border-radius: 15px; 
+            color: #ff8a80; margin: 15px 0; font-size: 0.85rem;
         }
+
+        .consequence-list ul { padding-left: 20px; margin: 10px 0; }
+        .consequence-list li { margin-bottom: 5px; }
 
         .btn-retry {
             background: #ff1744; color: white; border: none; 
-            padding: 15px 40px; border-radius: 50px; font-family: 'Luckiest Guy';
-            font-size: 1.2rem; cursor: pointer; transition: 0.3s; margin-top: 20px;
+            padding: 12px 30px; border-radius: 50px; font-family: 'Luckiest Guy';
+            font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-top: 10px;
         }
         .btn-retry:hover { transform: scale(1.05); background: #ff5252; box-shadow: 0 0 20px #ff1744; }
+
         @keyframes shake {
-            from { transform: rotate(-0.5deg); }
-            to { transform: rotate(0.5deg); }
+            from { transform: rotate(-0.3deg); }
+            to { transform: rotate(0.3deg); }
         }
     </style>
 </head>
@@ -48,22 +52,20 @@
             <h2>The Risk of Fighting Back</h2>
 
             <div class="info-text">
-                <p>Olivia decided to insult the bullies back. While it felt good for a second, the digital footprint of her anger gave the bullies exactly what they wanted: <strong>More fuel.</strong></p>
+                <p>Olivia decided to insult the bullies back. It felt good for a second, but it gave them exactly what they wanted: <strong>More fuel.</strong></p>
             </div>
-
-            
 
             <div class="consequence-list">
                 <strong>What happened next:</strong>
                 <ul>
-                    <li>The bullies screenshotted Olivia's insults to make HER look like the aggressor.</li>
-                    <li>More students joined in, claiming Olivia was "toxic."</li>
-                    <li>The original problem didn't go away—it just got louder.</li>
+                    <li>Bullies screenshotted her to make HER look like the aggressor.</li>
+                    <li>Others joined in, calling Olivia "toxic."</li>
+                    <li>The original problem just got louder.</li>
                 </ul>
             </div>
 
-            <p class="info-text" style="font-size: 0.9rem; font-style: italic;">
-                In cyberbullying, responding with hate often "feeds the trolls." The safest move is to stop, block, and tell a trusted adult.
+            <p class="info-text" style="font-size: 0.8rem; font-style: italic; color: #bbb;">
+                Responding with hate "feeds the trolls." The safest move is to stop, block, and tell a trusted adult.
             </p>
 
             <button class="btn-retry" onclick="goBack()">TRY THE BETTER PATH</button>

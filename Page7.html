@@ -41,7 +41,7 @@
             text-align: center;
             z-index: 200;
         }
-         .narrative-box p { color: #ffcdd2; margin: 0; font-size: 0.95rem; font-style: italic; }
+        .narrative-box p { color: #fff; font-family: 'Bitter', serif; font-size: 1.1rem; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
         .choice-warning {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -98,8 +98,6 @@
     const narrativeText = document.getElementById('narrativeText');
     const a10 = document.getElementById('audio10');
     const ping = document.getElementById('ping');
-
-    // 1. Hide narrative box and prepare it for a fade-in
     narrative.style.display = 'none';
     narrative.style.opacity = '0';
     narrative.style.transition = 'opacity 0.5s ease';

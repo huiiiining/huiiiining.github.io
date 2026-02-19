@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,73 +11,78 @@
         .photobooth { position: relative; width: 100vw; height: 100vh; background: #111; display: none; }
         .player { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         .photo { display: none; }
+        
         #counter {
-            position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
             background: rgba(255, 51, 133, 0.8); color: white;
             padding: 5px 15px; border-radius: 20px; font-family: 'Luckiest Guy';
-            z-index: 50; font-size: 1.2rem;
+            z-index: 50; font-size: 1.1rem;
         }
 
-        #eduOverlay {
+        #eduOverlay, #choiceEdu {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 2000;
             display: flex; align-items: center; justify-content: center;
         }
-        .edu-box { background: white; width: 85%; max-width: 400px; padding: 30px; border-radius: 25px; text-align: center; border: 4px solid #ff3385; }
+        .edu-box { background: white; width: 85%; max-width: 350px; padding: 25px; border-radius: 25px; text-align: center; border: 4px solid #ff3385; }
         
+        /* Photo Strip at the Bottom */
         .strip {
-            position: absolute; top: 20px; left: 20px; right: 20px;
-            height: 90px; display: flex; overflow-x: auto; gap: 10px;
-            z-index: 30; padding: 5px; background: rgba(0,0,0,0.3); border-radius: 10px;
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; height: 80px; display: flex; overflow-x: auto; gap: 8px;
+            z-index: 30; padding: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;
+            backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .strip img { 
-            height: 80px; border-radius: 5px; border: 2px solid #555; 
+            height: 70px; border-radius: 8px; border: 2px solid #555; 
             cursor: pointer; transition: 0.2s; 
         }
-        .strip img.selected { border: 4px solid #ff3385; transform: scale(1.05); }
+        .strip img.selected { border: 3px solid #ff3385; transform: scale(1.05); }
 
         .shutter-btn {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            width: 80px; height: 80px; background: white; border: 6px solid #ff3385;
+            position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%);
+            width: 65px; height: 65px; background: white; border: 5px solid #ff3385;
             border-radius: 50%; cursor: pointer; z-index: 40;
-            display: flex; align-items: center; justify-content: center;
         }
-        .shutter-btn:disabled { background: #555; border-color: #333; cursor: not-allowed; opacity: 0.5; }
+
+        /* --- THE MINIMIZED POST UI --- */
         #postUI {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 320px; background: white; border-radius: 15px; overflow: hidden;
-            display: none; z-index: 200; box-shadow: 0 10px 100px rgba(0,0,0,0.9);
+            position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%);
+            width: 260px; /* Reduced width */
+            background: white; border-radius: 20px; overflow: hidden;
+            display: none; z-index: 200; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
-        .post-header { padding: 12px; text-align: center; border-bottom: 1px solid #efefef; }
+        .post-header { padding: 6px; text-align: center; border-bottom: 1px solid #eee; }
+        .post-header span { font-size: 0.8rem; font-weight: bold; color: #333; }
+        
         #capturedPreview { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .post-caption { padding: 10px; font-size: 0.9rem; text-align: left; }
-        .post-actions { padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+        
+        .post-caption { padding: 8px 12px 0 12px; font-size: 0.8rem; line-height: 1.2; }
+        
+        .post-actions { padding: 8px 15px 15px 15px; display: flex; flex-direction: column; gap: 6px; }
+        .hint-text { font-size: 0.65rem; color: #ff3385; margin: 0; text-align: center; font-weight: bold; letter-spacing: -0.2px; }
 
-        .btn { padding: 12px; width: 100%; border-radius: 25px; border: none; font-family: 'Luckiest Guy'; cursor: pointer; }
+        .btn { padding: 8px; width: 100%; border-radius: 18px; border: none; font-family: 'Luckiest Guy', cursive; cursor: pointer; font-size: 0.85rem; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.95); }
         .btn-pink { background: #ff3385; color: white; }
-        .btn-grey { background: #efefef; color: #333; }
+        .btn-grey { background: #f0f0f0; color: #444; }
 
-        #choiceEdu {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 3000; display: none;
-            align-items: center; justify-content: center;
-        }
     </style>
 </head>
 <body>
 
     <div id="eduOverlay">
         <div class="edu-box">
-            <h2 style="font-family: 'Luckiest Guy'; color: #ff3385;">CAMERA ACCESS</h2>
-            <p>Ready for a coffee break? Take 5 photos and pick your favorite to post!</p>
+            <h2 style="font-family: 'Luckiest Guy'; color: #ff3385; margin-top:0;">CAMERA ACCESS</h2>
+            <p style="font-size: 0.9rem;">Ready for a coffee break? Take 5 photos and pick your favorite to post!</p>
             <button class="btn btn-pink" onclick="requestAccess()">OPEN CAMERA</button>
         </div>
     </div>
 
-    <div id="choiceEdu">
+    <div id="choiceEdu" style="display:none;">
         <div class="edu-box">
-            <h2 id="eduTitle" style="font-family: 'Luckiest Guy';"></h2>
-            <p id="eduBody"></p>
+            <h2 id="eduTitle" style="font-family: 'Luckiest Guy'; margin-top:0;"></h2>
+            <p id="eduBody" style="font-size: 0.9rem;"></p>
             <button class="btn btn-pink" onclick="proceedToPage()">CONTINUE STORY</button>
         </div>
     </div>
@@ -91,17 +97,17 @@
 
         <div id="postUI">
             <div class="post-header">
-                <span style="font-size:1rem; font-weight:bold; display:block;">@Olivia_Official</span>
+                <span>@Olivia_Official</span>
             </div>
             
             <img id="capturedPreview" src="">
 
             <div class="post-caption">
-                <strong>@Olivia_Official</strong> felt cute might delete later ✨
+                <strong>@Olivia_Official</strong> felt cute ✨
             </div>
 
             <div class="post-actions">
-                <p style="font-size: 0.75rem; color: #777; margin: 0; text-align: center;">Click an image in the strip to change your photo</p>
+                <p class="hint-text">Swap photos in the strip below! ↓</p>
                 <button class="btn btn-pink" onclick="showEdu(true)">TAG LOCATION</button>
                 <button class="btn btn-grey" onclick="showEdu(false)">POST WITHOUT TAG</button>
             </div>
@@ -116,7 +122,6 @@
         const shutter = document.getElementById('shutter');
         const counter = document.getElementById('counter');
         let photoCount = 0;
-        let selectedTagged = false;
 
         function requestAccess() {
             document.getElementById('eduOverlay').style.display = 'none';
@@ -153,7 +158,6 @@
             counter.innerText = `${photoCount} / 5`;
 
             if (photoCount === 5) {
-                shutter.disabled = true;
                 shutter.style.display = "none";
                 counter.style.display = "none";
                 selectPhoto(img);
@@ -169,18 +173,17 @@
         }
 
         function showEdu(tagged) {
-            selectedTagged = tagged;
             const title = document.getElementById('eduTitle');
             const body = document.getElementById('eduBody');
             
             if(tagged) {
                 title.innerText = "THE RISKS OF TAGGING";
                 title.style.color = "#ff3385";
-                body.innerText = "By tagging your exact location, you are leaving a real-time digital footprint. Anyone who follows you online can now see exactly where you are.";
+                body.innerText = "By tagging your exact location, you leave a real-time digital footprint. Anyone can see exactly where you are.";
             } else {
                 title.innerText = "SMART PRIVACY";
                 title.style.color = "#4CAF50";
-                body.innerText = "Good choice! By not tagging your location, you keep your physical movements private. However, remember that background landmarks can still give your location away!";
+                body.innerText = "Good choice! Keeping your location private helps protect your physical safety.";
             }
             document.getElementById('choiceEdu').style.display = "flex";
         }
